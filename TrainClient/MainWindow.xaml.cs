@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Threading;
+using TrainClient.Models;
 using TrainClient.Services;
 
 namespace TrainClient
 {
     public partial class MainWindow : Window
     {
-        private TrainServerService? _serverService;
+        private TrainWebSocketClientService? _clientService;
         private DispatcherTimer? _uiTimer;
 
         public MainWindow()
@@ -28,68 +29,102 @@ namespace TrainClient
 
         private void UiTimer_Tick(object? sender, EventArgs e)
         {
-            if (_serverService == null)
+            if (_clientService == null)
             {
+                txtWsStatus.Text = "미연결";
                 txtGpsStatus.Text = "미연결";
                 txtLat.Text = "-";
                 txtLng.Text = "-";
                 return;
             }
 
-            txtGpsStatus.Text = _serverService.IsGpsConnected ? "연결됨" : "미연결";
-            txtLat.Text = _serverService.CurrentLat?.ToString("F10") ?? "-";
-            txtLng.Text = _serverService.CurrentLng?.ToString("F10") ?? "-";
+            txtWsStatus.Text = _clientService.IsConnected ? "연결됨" : "미연결";
+            txtGpsStatus.Text = _clientService.IsGpsConnected ? "연결됨" : "미연결";
+            txtLat.Text = _clientService.CurrentLat?.ToString("F10") ?? "-";
+            txtLng.Text = _clientService.CurrentLng?.ToString("F10") ?? "-";
         }
 
-        private async void btnStart_Click(object sender, RoutedEventArgs e)
+        private async void btnConnect_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                if (_serverService != null)
+                if (_clientService != null)
                 {
-                    AppendLog("이미 서버가 실행 중입니다.");
+                    AppendLog("이미 실행 중입니다.");
                     return;
                 }
 
-                string host = txtHost.Text.Trim();
-                int port = int.Parse(txtPort.Text.Trim());
+                string wsUrl = txtServerUrl.Text.Trim();
                 string gpsPort = txtGpsPort.Text.Trim();
                 int baudRate = int.Parse(txtBaudRate.Text.Trim());
 
-                _serverService = new TrainServerService(host, port, gpsPort, baudRate);
-                _serverService.LogReceived += AppendLog;
+                _clientService = new TrainWebSocketClientService(wsUrl, gpsPort, baudRate);
+                _clientService.LogReceived += AppendLog;
+                _clientService.ControlCommandReceived += OnControlCommandReceived;
 
-                await _serverService.StartAsync();
+                await _clientService.StartAsync();
 
-                AppendLog($"서버 시작 완료: http://{host}:{port}/");
+                AppendLog($"관제 접속 시작: {wsUrl}");
             }
             catch (Exception ex)
             {
-                AppendLog($"서버 시작 실패: {ex.Message}");
+                AppendLog($"시작 실패: {ex.Message}");
                 MessageBox.Show(ex.Message, "오류", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                if (_clientService != null)
+                {
+                    _clientService.LogReceived -= AppendLog;
+                    _clientService.ControlCommandReceived -= OnControlCommandReceived;
+                    _clientService = null;
+                }
             }
         }
 
-        private async void btnStop_Click(object sender, RoutedEventArgs e)
+        private async void btnDisconnect_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                if (_serverService == null)
+                if (_clientService == null)
                 {
-                    AppendLog("실행 중인 서버가 없습니다.");
+                    AppendLog("실행 중인 클라이언트가 없습니다.");
                     return;
                 }
 
-                await _serverService.StopAsync();
-                _serverService.LogReceived -= AppendLog;
-                _serverService = null;
+                await _clientService.StopAsync();
+                _clientService.LogReceived -= AppendLog;
+                _clientService.ControlCommandReceived -= OnControlCommandReceived;
+                _clientService = null;
 
-                AppendLog("서버 중지 완료");
+                AppendLog("연결 종료 완료");
             }
             catch (Exception ex)
             {
-                AppendLog($"서버 중지 실패: {ex.Message}");
+                AppendLog($"종료 실패: {ex.Message}");
             }
+        }
+
+        private void OnControlCommandReceived(WsControlMessage cmd)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                string text = $"제어명령 수신: train={cmd.Train}, op={cmd.Operation}, value={cmd.Value}";
+                AppendLog(text);
+
+                if (cmd.Operation == 1 && cmd.Value == 1)
+                    txtLastCommand.Text = $"열차 {cmd.Train}: 가속 버튼 누름";
+                else if (cmd.Operation == 1 && cmd.Value == 0)
+                    txtLastCommand.Text = $"열차 {cmd.Train}: 가속 버튼 뗌";
+                else if (cmd.Operation == 2 && cmd.Value == 1)
+                    txtLastCommand.Text = $"열차 {cmd.Train}: 감속 버튼 누름";
+                else if (cmd.Operation == 2 && cmd.Value == 0)
+                    txtLastCommand.Text = $"열차 {cmd.Train}: 감속 버튼 뗌";
+                else if (cmd.Operation == 3 && cmd.Value == 1)
+                    txtLastCommand.Text = $"열차 {cmd.Train}: 정지 버튼 누름";
+                else if (cmd.Operation == 3 && cmd.Value == 0)
+                    txtLastCommand.Text = $"열차 {cmd.Train}: 정지 버튼 뗌";
+                else
+                    txtLastCommand.Text = $"열차 {cmd.Train}: 알 수 없는 명령";
+            });
         }
 
         private void ClearLog_Click(object sender, RoutedEventArgs e)
@@ -110,9 +145,9 @@ namespace TrainClient
         {
             try
             {
-                if (_serverService != null)
+                if (_clientService != null)
                 {
-                    await _serverService.StopAsync();
+                    await _clientService.StopAsync();
                 }
             }
             catch

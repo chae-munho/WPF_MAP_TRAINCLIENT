@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "CSo5AVm3BfI=",
+  "dgSpecHash": "lItsUumA+gU=",
   "success": true,
-  "projectFilePath": "C:\\Users\\munho\\STUDY_C#\\TrainClient\\TrainClient\\TrainClient.csproj",
+  "projectFilePath": "C:\\ean\\문경모노레일\\WPF_MAP_TRAINCLIENT\\TrainClient\\TrainClient.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\munho\\.nuget\\packages\\runtime.android-arm.runtime.native.system.io.ports\\10.0.5\\runtime.android-arm.runtime.native.system.io.ports.10.0.5.nupkg.sha512",
     "C:\\Users\\munho\\.nuget\\packages\\runtime.android-arm64.runtime.native.system.io.ports\\10.0.5\\runtime.android-arm64.runtime.native.system.io.ports.10.0.5.nupkg.sha512",

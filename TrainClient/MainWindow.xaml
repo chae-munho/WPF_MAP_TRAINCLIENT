@@ -2,11 +2,12 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="TrainClient"
-        Height="700"
-        Width="1100"
+        Height="760"
+        Width="1180"
         WindowStartupLocation="CenterScreen">
     <Grid Margin="12">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -14,11 +15,11 @@
 
         <Border Grid.Row="0" Padding="10" BorderBrush="Gray" BorderThickness="1" CornerRadius="8">
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                <TextBlock Text="서버 주소:" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                <TextBox x:Name="txtHost" Width="180" Text="0.0.0.0" Margin="0,0,10,0"/>
-
-                <TextBlock Text="포트:" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                <TextBox x:Name="txtPort" Width="100" Text="5090" Margin="0,0,10,0"/>
+                <TextBlock Text="관제 WS 주소:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                <TextBox x:Name="txtServerUrl"
+                         Width="340"
+                         Text="ws://10.88.20.99:5090/ws/train"
+                         Margin="0,0,10,0"/>
 
                 <TextBlock Text="GPS COM:" VerticalAlignment="Center" Margin="0,0,8,0"/>
                 <TextBox x:Name="txtGpsPort" Width="100" Text="COM6" Margin="0,0,10,0"/>
@@ -26,13 +27,26 @@
                 <TextBlock Text="Baud:" VerticalAlignment="Center" Margin="0,0,8,0"/>
                 <TextBox x:Name="txtBaudRate" Width="100" Text="9600" Margin="0,0,10,0"/>
 
-                <Button x:Name="btnStart" Content="서버 시작" Width="120" Height="32" Margin="0,0,8,0" Click="btnStart_Click"/>
-                <Button x:Name="btnStop" Content="서버 중지" Width="120" Height="32" Click="btnStop_Click"/>
+                <Button x:Name="btnConnect"
+                        Content="관제에 접속"
+                        Width="120"
+                        Height="32"
+                        Margin="0,0,8,0"
+                        Click="btnConnect_Click"/>
+
+                <Button x:Name="btnDisconnect"
+                        Content="연결 종료"
+                        Width="120"
+                        Height="32"
+                        Click="btnDisconnect_Click"/>
             </StackPanel>
         </Border>
 
         <Border Grid.Row="1" Margin="0,10,0,10" Padding="10" BorderBrush="Gray" BorderThickness="1" CornerRadius="8">
             <StackPanel Orientation="Horizontal">
+                <TextBlock Text="WebSocket 상태: " FontWeight="Bold"/>
+                <TextBlock x:Name="txtWsStatus" Text="미연결" Margin="0,0,20,0"/>
+
                 <TextBlock Text="GPS 연결 상태: " FontWeight="Bold"/>
                 <TextBlock x:Name="txtGpsStatus" Text="미연결" Margin="0,0,20,0"/>
 
@@ -44,7 +58,14 @@
             </StackPanel>
         </Border>
 
-        <Border Grid.Row="2" Padding="10" BorderBrush="Gray" BorderThickness="1" CornerRadius="8">
+        <Border Grid.Row="2" Margin="0,0,0,10" Padding="10" BorderBrush="Gray" BorderThickness="1" CornerRadius="8">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="마지막 제어명령: " FontWeight="Bold"/>
+                <TextBlock x:Name="txtLastCommand" Text="-" />
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="3" Padding="10" BorderBrush="Gray" BorderThickness="1" CornerRadius="8">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>

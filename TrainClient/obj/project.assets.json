@@ -1724,11 +1724,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\munho\\STUDY_C#\\TrainClient\\TrainClient\\TrainClient.csproj",
+      "projectUniqueName": "C:\\ean\\문경모노레일\\WPF_MAP_TRAINCLIENT\\TrainClient\\TrainClient.csproj",
       "projectName": "TrainClient",
-      "projectPath": "C:\\Users\\munho\\STUDY_C#\\TrainClient\\TrainClient\\TrainClient.csproj",
+      "projectPath": "C:\\ean\\문경모노레일\\WPF_MAP_TRAINCLIENT\\TrainClient\\TrainClient.csproj",
       "packagesPath": "C:\\Users\\munho\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\munho\\STUDY_C#\\TrainClient\\TrainClient\\obj\\",
+      "outputPath": "C:\\ean\\문경모노레일\\WPF_MAP_TRAINCLIENT\\TrainClient\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

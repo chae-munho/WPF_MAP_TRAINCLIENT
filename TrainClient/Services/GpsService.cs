@@ -137,22 +137,17 @@ namespace TrainClient.Services
 
         private static double ConvertNmeaToDecimal(string value, string direction, bool isLatitude)
         {
-            double raw = double.Parse(value, CultureInfo.InvariantCulture);
-
-            int degreeDigits = isLatitude ? 2 : 3;
-            double degrees = Math.Floor(raw / Math.Pow(10, value.Length - degreeDigits - 3));
-
-            // 더 안전한 방식으로 분리
-            string rawString = raw.ToString("F10", CultureInfo.InvariantCulture);
-            int dotIndex = rawString.IndexOf('.', StringComparison.Ordinal);
-            string integerPart = dotIndex >= 0 ? rawString[..dotIndex] : rawString;
+            string raw = value.Trim();
 
             int degLen = isLatitude ? 2 : 3;
-            if (integerPart.Length < degLen)
+            if (raw.Length <= degLen)
                 throw new FormatException("NMEA 좌표 형식 오류");
 
-            double deg = double.Parse(integerPart[..degLen], CultureInfo.InvariantCulture);
-            double min = double.Parse(rawString[degLen..], CultureInfo.InvariantCulture);
+            string degPart = raw.Substring(0, degLen);
+            string minPart = raw.Substring(degLen);
+
+            double deg = double.Parse(degPart, CultureInfo.InvariantCulture);
+            double min = double.Parse(minPart, CultureInfo.InvariantCulture);
 
             double result = deg + (min / 60.0);
 
