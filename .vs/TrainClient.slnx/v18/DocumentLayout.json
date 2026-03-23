@@ -3,12 +3,20 @@
   "WorkspaceRootPath": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|c:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\wpf_map_trainclient\\trainclient\\data\\traindatarepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|solutionrelative:trainclient\\data\\traindatarepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|c:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\wpf_map_trainclient\\trainclient\\models\\wstelemetrymessage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|solutionrelative:trainclient\\models\\wstelemetrymessage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|c:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\wpf_map_trainclient\\trainclient\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|solutionrelative:trainclient\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|c:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\wpf_map_trainclient\\trainclient\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|solutionrelative:trainclient\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+      "AbsoluteMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|c:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\wpf_map_trainclient\\trainclient\\models\\wshellomessage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|solutionrelative:trainclient\\models\\wshellomessage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|c:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\wpf_map_trainclient\\trainclient\\services\\trainwebsocketclientservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -19,16 +27,12 @@
       "RelativeMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|solutionrelative:trainclient\\services\\gpsservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|c:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\wpf_map_trainclient\\trainclient\\models\\wstelemetrymessage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|solutionrelative:trainclient\\models\\wstelemetrymessage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|c:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\wpf_map_trainclient\\trainclient\\models\\wspositionmessage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|solutionrelative:trainclient\\models\\wspositionmessage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|c:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\wpf_map_trainclient\\trainclient\\models\\wshellomessage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|solutionrelative:trainclient\\models\\wshellomessage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|c:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\wpf_map_trainclient\\trainclient\\models\\wscontrolackmessage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|solutionrelative:trainclient\\models\\wscontrolackmessage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|c:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\wpf_map_trainclient\\trainclient\\models\\wsheartbeatmessage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -39,12 +43,8 @@
       "RelativeMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|solutionrelative:trainclient\\models\\wscontrolmessage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|c:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\wpf_map_trainclient\\trainclient\\models\\wscontrolackmessage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|solutionrelative:trainclient\\models\\wscontrolackmessage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|c:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\wpf_map_trainclient\\trainclient\\data\\traindatarepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|solutionrelative:trainclient\\data\\traindatarepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|c:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\wpf_map_trainclient\\trainclient\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|solutionrelative:trainclient\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     }
   ],
   "DocumentGroupContainers": [
@@ -54,95 +54,109 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "WsPositionMessage.cs",
-              "DocumentMoniker": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Models\\WsPositionMessage.cs",
-              "RelativeDocumentMoniker": "TrainClient\\Models\\WsPositionMessage.cs",
-              "ToolTip": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Models\\WsPositionMessage.cs",
-              "RelativeToolTip": "TrainClient\\Models\\WsPositionMessage.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-20T05:32:18.603Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 1,
               "Title": "WsTelemetryMessage.cs",
               "DocumentMoniker": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Models\\WsTelemetryMessage.cs",
               "RelativeDocumentMoniker": "TrainClient\\Models\\WsTelemetryMessage.cs",
               "ToolTip": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Models\\WsTelemetryMessage.cs",
               "RelativeToolTip": "TrainClient\\Models\\WsTelemetryMessage.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAABEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-20T05:28:38.705Z"
+              "WhenOpened": "2026-03-20T05:28:38.705Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 0,
+              "Title": "TrainDataRepository.cs",
+              "DocumentMoniker": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Data\\TrainDataRepository.cs",
+              "RelativeDocumentMoniker": "TrainClient\\Data\\TrainDataRepository.cs",
+              "ToolTip": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Data\\TrainDataRepository.cs",
+              "RelativeToolTip": "TrainClient\\Data\\TrainDataRepository.cs",
+              "ViewState": "AgIAAFEAAAAAAAAAAAAAAFwAAAA1AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-18T08:38:33.626Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
               "Title": "GpsService.cs",
               "DocumentMoniker": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Services\\GpsService.cs",
               "RelativeDocumentMoniker": "TrainClient\\Services\\GpsService.cs",
               "ToolTip": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Services\\GpsService.cs",
               "RelativeToolTip": "TrainClient\\Services\\GpsService.cs",
-              "ViewState": "AgIAAG8AAAAAAAAAAAAqwIYAAAANAAAAAAAAAA==",
+              "ViewState": "AgIAAHkAAAAAAAAAAAAAAI4AAAAlAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-03-18T08:38:01.636Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "TrainWebSocketClientService.cs",
-              "DocumentMoniker": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Services\\TrainWebSocketClientService.cs",
-              "RelativeDocumentMoniker": "TrainClient\\Services\\TrainWebSocketClientService.cs",
-              "ToolTip": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Services\\TrainWebSocketClientService.cs",
-              "RelativeToolTip": "TrainClient\\Services\\TrainWebSocketClientService.cs",
-              "ViewState": "AgIAAIcBAAAAAAAAAAAmwJ8BAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-20T05:48:14.175Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "MainWindow.xaml.cs",
-              "DocumentMoniker": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\MainWindow.xaml.cs",
-              "RelativeDocumentMoniker": "TrainClient\\MainWindow.xaml.cs",
-              "ToolTip": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\MainWindow.xaml.cs",
-              "RelativeToolTip": "TrainClient\\MainWindow.xaml.cs",
-              "ViewState": "AgIAAJ8AAAAAAAAAAAAAAIAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-18T04:09:10.498Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 3,
               "Title": "WsHelloMessage.cs",
               "DocumentMoniker": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Models\\WsHelloMessage.cs",
               "RelativeDocumentMoniker": "TrainClient\\Models\\WsHelloMessage.cs",
               "ToolTip": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Models\\WsHelloMessage.cs",
               "RelativeToolTip": "TrainClient\\Models\\WsHelloMessage.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAkAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-03-20T05:21:46.255Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "MainWindow.xaml",
-              "DocumentMoniker": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\MainWindow.xaml",
-              "RelativeDocumentMoniker": "TrainClient\\MainWindow.xaml",
-              "ToolTip": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\MainWindow.xaml",
-              "RelativeToolTip": "TrainClient\\MainWindow.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-03-18T04:09:11.464Z"
+              "DocumentIndex": 2,
+              "Title": "MainWindow.xaml.cs",
+              "DocumentMoniker": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\MainWindow.xaml.cs",
+              "RelativeDocumentMoniker": "TrainClient\\MainWindow.xaml.cs",
+              "ToolTip": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\MainWindow.xaml.cs",
+              "RelativeToolTip": "TrainClient\\MainWindow.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-18T04:09:10.498Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "TrainWebSocketClientService.cs",
+              "DocumentMoniker": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Services\\TrainWebSocketClientService.cs",
+              "RelativeDocumentMoniker": "TrainClient\\Services\\TrainWebSocketClientService.cs",
+              "ToolTip": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Services\\TrainWebSocketClientService.cs",
+              "RelativeToolTip": "TrainClient\\Services\\TrainWebSocketClientService.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAAAKMBAAAxAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-20T05:48:14.175Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "WsPositionMessage.cs",
+              "DocumentMoniker": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Models\\WsPositionMessage.cs",
+              "RelativeDocumentMoniker": "TrainClient\\Models\\WsPositionMessage.cs",
+              "ToolTip": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Models\\WsPositionMessage.cs",
+              "RelativeToolTip": "TrainClient\\Models\\WsPositionMessage.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAcAAAAnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-20T05:32:18.603Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 7,
+              "Title": "WsControlAckMessage.cs",
+              "DocumentMoniker": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Models\\WsControlAckMessage.cs",
+              "RelativeDocumentMoniker": "TrainClient\\Models\\WsControlAckMessage.cs",
+              "ToolTip": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Models\\WsControlAckMessage.cs",
+              "RelativeToolTip": "TrainClient\\Models\\WsControlAckMessage.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-20T05:35:46.327Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
               "Title": "WsHeartbeatMessage.cs",
               "DocumentMoniker": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Models\\WsHeartbeatMessage.cs",
               "RelativeDocumentMoniker": "TrainClient\\Models\\WsHeartbeatMessage.cs",
@@ -154,7 +168,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 9,
               "Title": "WsControlMessage.cs",
               "DocumentMoniker": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Models\\WsControlMessage.cs",
               "RelativeDocumentMoniker": "TrainClient\\Models\\WsControlMessage.cs",
@@ -166,27 +180,14 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "WsControlAckMessage.cs",
-              "DocumentMoniker": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Models\\WsControlAckMessage.cs",
-              "RelativeDocumentMoniker": "TrainClient\\Models\\WsControlAckMessage.cs",
-              "ToolTip": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Models\\WsControlAckMessage.cs",
-              "RelativeToolTip": "TrainClient\\Models\\WsControlAckMessage.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-20T05:35:46.327Z"
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 10,
-              "Title": "TrainDataRepository.cs",
-              "DocumentMoniker": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Data\\TrainDataRepository.cs",
-              "RelativeDocumentMoniker": "TrainClient\\Data\\TrainDataRepository.cs",
-              "ToolTip": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Data\\TrainDataRepository.cs",
-              "RelativeToolTip": "TrainClient\\Data\\TrainDataRepository.cs",
-              "ViewState": "AgIAACQBAAAAAAAAAAAqwFcBAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-18T08:38:33.626Z"
+              "Title": "MainWindow.xaml",
+              "DocumentMoniker": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\MainWindow.xaml",
+              "RelativeDocumentMoniker": "TrainClient\\MainWindow.xaml",
+              "ToolTip": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\MainWindow.xaml",
+              "RelativeToolTip": "TrainClient\\MainWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-03-18T04:09:11.464Z"
             }
           ]
         }
