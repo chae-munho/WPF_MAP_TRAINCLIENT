@@ -34,6 +34,9 @@ namespace TrainClient.Services
         public bool IsConnected =>
             _socket != null && _socket.State == WebSocketState.Open;
 
+        public int CurrentFrameIndex => _currentFrameIndex;
+        public int CurrentPositionIndex => _currentPositionIndex;
+
         public event Action<string>? LogReceived;
         public event Action<WsControlMessage>? ControlCommandReceived;
 
@@ -46,10 +49,20 @@ namespace TrainClient.Services
             TrainDataRepository.Validate();
         }
 
-        public async Task StartAsync()
+        public async Task StartAsync(bool resetProgress)
         {
             if (_cts != null)
                 return;
+
+            if (resetProgress)
+            {
+                ResetProgress();
+                LogReceived?.Invoke("전송 위치를 처음으로 초기화했습니다.");
+            }
+            else
+            {
+                LogReceived?.Invoke($"이전 중단 시점부터 이어서 시작합니다. frame={_currentFrameIndex}, position={_currentPositionIndex}");
+            }
 
             _cts = new CancellationTokenSource();
 
@@ -57,6 +70,12 @@ namespace TrainClient.Services
 
             _runTask = Task.Run(() => RunClientLoopAsync(_cts.Token));
             await Task.CompletedTask;
+        }
+
+        public void ResetProgress()
+        {
+            _currentFrameIndex = 0;
+            _currentPositionIndex = 0;
         }
 
         public async Task StopAsync()
@@ -90,7 +109,7 @@ namespace TrainClient.Services
 
                 await _gpsService.StopAsync();
 
-                LogReceived?.Invoke("WebSocket 클라이언트 종료");
+                LogReceived?.Invoke($"WebSocket 클라이언트 종료 (진행상태 유지: frame={_currentFrameIndex}, position={_currentPositionIndex})");
             }
             finally
             {
@@ -247,7 +266,7 @@ namespace TrainClient.Services
 
                     if (data.Length > 0)
                     {
-                        LogReceived?.Invoke($"telemetry 전송 완료 (첫번째 열차ID={data[0]})");
+                        LogReceived?.Invoke($"telemetry 전송 완료 (첫번째 열차ID={data[0]}, 현재 frame={_currentFrameIndex})");
                     }
                     else
                     {
@@ -292,7 +311,7 @@ namespace TrainClient.Services
                         Timestamp = DateTime.UtcNow.ToString("O")
                     }, token);
 
-                    LogReceived?.Invoke($"position 전송 완료 train={_trainId}, lat={lat}, lng={lng}, source={source}");
+                    LogReceived?.Invoke($"position 전송 완료 train={_trainId}, lat={lat}, lng={lng}, source={source}, 현재 position={_currentPositionIndex}");
                 }
 
                 await Task.Delay(1000, token);
@@ -365,8 +384,6 @@ namespace TrainClient.Services
 
             return Encoding.UTF8.GetString(ms.ToArray());
         }
-
-     
 
         private (double lat, double lng) GetFakePositionAndAdvance()
         {

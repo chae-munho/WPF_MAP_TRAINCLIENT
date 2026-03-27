@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 using TrainClient.Models;
@@ -46,37 +47,46 @@ namespace TrainClient
 
         private async void btnConnect_Click(object sender, RoutedEventArgs e)
         {
+            await StartClientAsync(resetProgress: true);
+        }
+
+        private async void btnResumeConnect_Click(object sender, RoutedEventArgs e)
+        {
+            await StartClientAsync(resetProgress: false);
+        }
+
+        private async Task StartClientAsync(bool resetProgress)
+        {
             try
             {
-                if (_clientService != null)
-                {
-                    AppendLog("이미 실행 중입니다.");
-                    return;
-                }
-
                 string wsUrl = txtServerUrl.Text.Trim();
                 string gpsPort = txtGpsPort.Text.Trim();
                 int baudRate = int.Parse(txtBaudRate.Text.Trim());
 
-                _clientService = new TrainWebSocketClientService(wsUrl, gpsPort, baudRate);
-                _clientService.LogReceived += AppendLog;
-                _clientService.ControlCommandReceived += OnControlCommandReceived;
+                if (_clientService == null)
+                {
+                    _clientService = new TrainWebSocketClientService(wsUrl, gpsPort, baudRate);
+                    _clientService.LogReceived += AppendLog;
+                    _clientService.ControlCommandReceived += OnControlCommandReceived;
+                }
 
-                await _clientService.StartAsync();
+                if (_clientService.IsConnected)
+                {
+                    AppendLog("이미 관제 서버에 연결되어 있습니다.");
+                    return;
+                }
 
-                AppendLog($"관제 접속 시작: {wsUrl}");
+                await _clientService.StartAsync(resetProgress);
+
+                if (resetProgress)
+                    AppendLog("관제 접속 시작 (처음부터)");
+                else
+                    AppendLog("관제 접속 시작 (중단 지점부터 이어서)");
             }
             catch (Exception ex)
             {
                 AppendLog($"시작 실패: {ex.Message}");
                 MessageBox.Show(ex.Message, "오류", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                if (_clientService != null)
-                {
-                    _clientService.LogReceived -= AppendLog;
-                    _clientService.ControlCommandReceived -= OnControlCommandReceived;
-                    _clientService = null;
-                }
             }
         }
 
@@ -86,16 +96,19 @@ namespace TrainClient
             {
                 if (_clientService == null)
                 {
-                    AppendLog("실행 중인 클라이언트가 없습니다.");
+                    AppendLog("클라이언트가 아직 생성되지 않았습니다.");
+                    return;
+                }
+
+                if (!_clientService.IsConnected)
+                {
+                    AppendLog("현재 연결되어 있지 않습니다.");
                     return;
                 }
 
                 await _clientService.StopAsync();
-                _clientService.LogReceived -= AppendLog;
-                _clientService.ControlCommandReceived -= OnControlCommandReceived;
-                _clientService = null;
 
-                AppendLog("연결 종료 완료");
+                AppendLog("연결 종료 완료 (진행 상태 유지)");
             }
             catch (Exception ex)
             {
@@ -148,6 +161,9 @@ namespace TrainClient
                 if (_clientService != null)
                 {
                     await _clientService.StopAsync();
+                    _clientService.LogReceived -= AppendLog;
+                    _clientService.ControlCommandReceived -= OnControlCommandReceived;
+                    _clientService = null;
                 }
             }
             catch

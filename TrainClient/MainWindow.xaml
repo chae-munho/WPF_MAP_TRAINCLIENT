@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="TrainClient"
         Height="760"
-        Width="1180"
+        Width="1280"
         WindowStartupLocation="CenterScreen">
     <Grid Margin="12">
         <Grid.RowDefinitions>
@@ -28,11 +28,18 @@
                 <TextBox x:Name="txtBaudRate" Width="100" Text="9600" Margin="0,0,10,0"/>
 
                 <Button x:Name="btnConnect"
-                        Content="관제에 접속"
+                        Content="처음부터 접속"
                         Width="120"
                         Height="32"
                         Margin="0,0,8,0"
                         Click="btnConnect_Click"/>
+
+                <Button x:Name="btnResumeConnect"
+                        Content="이어서 접속"
+                        Width="120"
+                        Height="32"
+                        Margin="0,0,8,0"
+                        Click="btnResumeConnect_Click"/>
 
                 <Button x:Name="btnDisconnect"
                         Content="연결 종료"
