@@ -48,6 +48,7 @@ namespace TrainClient.Popups
         private LibVLC? _libVLC;
         private MediaPlayer? _mediaPlayer;
         private VideoView? _videoView;
+        private string _currentUrl = "";
 
         public CameraPopup()
         {
@@ -67,8 +68,8 @@ namespace TrainClient.Popups
                 _libVLC = new LibVLC(
                     "--no-audio",
                     "--rtsp-tcp",
-                    "--network-caching=300",
-                    "--live-caching=300"
+                    "--network-caching=500",
+                    "--live-caching=500"
                 );
 
                 _mediaPlayer = new MediaPlayer(_libVLC);
@@ -143,6 +144,16 @@ namespace TrainClient.Popups
                     return;
                 }
 
+                // 같은 URL이면 다시 재생하지 않음
+                if (string.Equals(_currentUrl, url, StringComparison.OrdinalIgnoreCase))
+                {
+                    txtSelectedUrl.Text = url;
+                    txtVideoPlaceholder.Visibility = Visibility.Collapsed;
+                    return;
+                }
+
+                _currentUrl = url;
+
                 using Media media = new(_libVLC, new Uri(url));
                 bool started = _mediaPlayer.Play(media);
 
@@ -173,6 +184,7 @@ namespace TrainClient.Popups
                 _mediaPlayer = null;
                 _libVLC = null;
                 _videoView = null;
+                _currentUrl = "";
             }
             catch
             {

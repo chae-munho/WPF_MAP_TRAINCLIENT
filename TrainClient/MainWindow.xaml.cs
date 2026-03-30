@@ -127,7 +127,7 @@ namespace TrainClient
 
         private void OnControlCommandReceived(WsControlMessage cmd)
         {
-            Dispatcher.Invoke(() =>
+            Dispatcher.BeginInvoke(new Action(() =>
             {
                 string text = $"제어명령 수신: train={cmd.Train}, op={cmd.Operation}, value={cmd.Value}";
                 AppendLog(text);
@@ -146,12 +146,12 @@ namespace TrainClient
                     txtLastCommand.Text = $"열차 {cmd.Train}: 정지 버튼 뗌";
                 else
                     txtLastCommand.Text = $"열차 {cmd.Train}: 알 수 없는 명령";
-            });
+            }));
         }
 
         private void OnTelemetryReceived(int[] data)
         {
-            Dispatcher.Invoke(() =>
+            Dispatcher.BeginInvoke(new Action(() =>
             {
                 try
                 {
@@ -172,7 +172,7 @@ namespace TrainClient
                 {
                     AppendLog($"인터컴 처리 실패: {ex.Message}");
                 }
-            });
+            }));
         }
 
         private void HandleIntercomTransition(int trainNo, int currentCarNo, ref int previousCarNo)
@@ -184,8 +184,9 @@ namespace TrainClient
 
                 EnsureCameraPopup();
                 _cameraPopup!.AddAlarm(trainNo, currentCarNo);
-                _cameraPopup.Show();
-                _cameraPopup.Activate();
+
+                if (!_cameraPopup.IsVisible)
+                    _cameraPopup.Show();
             }
 
             previousCarNo = currentCarNo;
@@ -227,11 +228,11 @@ namespace TrainClient
 
         private void AppendLog(string message)
         {
-            Dispatcher.Invoke(() =>
+            Dispatcher.BeginInvoke(new Action(() =>
             {
                 txtLog.AppendText($"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {message}{Environment.NewLine}");
                 txtLog.ScrollToEnd();
-            });
+            }));
         }
 
         protected override async void OnClosed(EventArgs e)
