@@ -58,6 +58,14 @@
               "target": "Package",
               "version": "[3.9.6, )"
             },
+            "OpenCvSharp4": {
+              "target": "Package",
+              "version": "[4.13.0.20260318, )"
+            },
+            "OpenCvSharp4.runtime.win": {
+              "target": "Package",
+              "version": "[4.13.0.20260302, )"
+            },
             "System.IO.Ports": {
               "target": "Package",
               "version": "[10.0.5, )"

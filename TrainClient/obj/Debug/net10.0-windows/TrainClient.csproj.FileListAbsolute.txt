@@ -934,3 +934,6 @@ C:\ean\문경모노레일\WPF_MAP_TRAINCLIENT\TrainClient\bin\Debug\net10.0-wind
 C:\ean\문경모노레일\WPF_MAP_TRAINCLIENT\TrainClient\bin\Debug\net10.0-windows\libvlc\win-x86\plugins\visualization\libprojectm_plugin.dll
 C:\ean\문경모노레일\WPF_MAP_TRAINCLIENT\TrainClient\bin\Debug\net10.0-windows\libvlc\win-x86\plugins\visualization\libvisual_plugin.dll
 C:\ean\문경모노레일\WPF_MAP_TRAINCLIENT\TrainClient\obj\Debug\net10.0-windows\TrainClient_Content.g.cs
+C:\ean\문경모노레일\WPF_MAP_TRAINCLIENT\TrainClient\bin\Debug\net10.0-windows\OpenCvSharp.dll
+C:\ean\문경모노레일\WPF_MAP_TRAINCLIENT\TrainClient\bin\Debug\net10.0-windows\runtimes\win-x64\native\OpenCvSharpExtern.dll
+C:\ean\문경모노레일\WPF_MAP_TRAINCLIENT\TrainClient\bin\Debug\net10.0-windows\runtimes\win-x64\native\opencv_videoio_ffmpeg4130_64.dll

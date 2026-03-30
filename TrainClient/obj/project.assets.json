@@ -34,6 +34,35 @@
           "Microsoft.WindowsDesktop.App.WPF"
         ]
       },
+      "OpenCvSharp4/4.13.0.20260318": {
+        "type": "package",
+        "compile": {
+          "lib/net8.0/OpenCvSharp.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/OpenCvSharp.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "OpenCvSharp4.runtime.win/4.13.0.20260302": {
+        "type": "package",
+        "build": {
+          "build/net8.0/OpenCvSharp4.runtime.win.props": {}
+        },
+        "runtimeTargets": {
+          "runtimes/win-x64/native/OpenCvSharpExtern.dll": {
+            "assetType": "native",
+            "rid": "win-x64"
+          },
+          "runtimes/win-x64/native/opencv_videoio_ffmpeg4130_64.dll": {
+            "assetType": "native",
+            "rid": "win-x64"
+          }
+        }
+      },
       "runtime.android-arm.runtime.native.System.IO.Ports/10.0.5": {
         "type": "package",
         "runtimeTargets": {
@@ -1276,6 +1305,43 @@
         "lib/netcoreapp3.1/LibVLCSharp.WPF.xml",
         "libvlcsharp.wpf.3.9.6.nupkg.sha512",
         "libvlcsharp.wpf.nuspec"
+      ]
+    },
+    "OpenCvSharp4/4.13.0.20260318": {
+      "sha512": "DD3ub2N4/ldIbcsIt03lSSVCqKCImaIMPjud+3G7ikj/RUa//BV59iuh924hTjR+ghTQW6r+h2KbjMzJT4EuRQ==",
+      "type": "package",
+      "path": "opencvsharp4/4.13.0.20260318",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.managed.md",
+        "lib/net8.0/OpenCvSharp.dll",
+        "lib/net8.0/OpenCvSharp.xml",
+        "lib/netstandard2.0/OpenCvSharp.dll",
+        "lib/netstandard2.0/OpenCvSharp.xml",
+        "lib/netstandard2.1/OpenCvSharp.dll",
+        "lib/netstandard2.1/OpenCvSharp.xml",
+        "opencvsharp.png",
+        "opencvsharp4.4.13.0.20260318.nupkg.sha512",
+        "opencvsharp4.nuspec"
+      ]
+    },
+    "OpenCvSharp4.runtime.win/4.13.0.20260302": {
+      "sha512": "VC2n9CVZQvAm+p0NXW077e/MGkDBraT3ye4FdInRPpxTVK64DwGnLuIncS8mwrkVcKhqh82/KgcDgKXNWDndAA==",
+      "type": "package",
+      "path": "opencvsharp4.runtime.win/4.13.0.20260302",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.runtime.md",
+        "build/net8.0/OpenCvSharp4.runtime.win.props",
+        "build/netcoreapp/OpenCvSharp4.runtime.win.props",
+        "build/netstandard/OpenCvSharp4.runtime.win.props",
+        "opencvsharp.png",
+        "opencvsharp4.runtime.win.4.13.0.20260302.nupkg.sha512",
+        "opencvsharp4.runtime.win.nuspec",
+        "runtimes/win-x64/native/OpenCvSharpExtern.dll",
+        "runtimes/win-x64/native/opencv_videoio_ffmpeg4130_64.dll"
       ]
     },
     "runtime.android-arm.runtime.native.System.IO.Ports/10.0.5": {
@@ -2898,6 +2964,8 @@
     "net10.0-windows7.0": [
       "LibVLCSharp >= 3.9.6",
       "LibVLCSharp.WPF >= 3.9.6",
+      "OpenCvSharp4 >= 4.13.0.20260318",
+      "OpenCvSharp4.runtime.win >= 4.13.0.20260302",
       "System.IO.Ports >= 10.0.5",
       "VideoLAN.LibVLC.Windows >= 3.0.23"
     ]
@@ -2959,6 +3027,14 @@
           "LibVLCSharp.WPF": {
             "target": "Package",
             "version": "[3.9.6, )"
+          },
+          "OpenCvSharp4": {
+            "target": "Package",
+            "version": "[4.13.0.20260318, )"
+          },
+          "OpenCvSharp4.runtime.win": {
+            "target": "Package",
+            "version": "[4.13.0.20260302, )"
           },
           "System.IO.Ports": {
             "target": "Package",

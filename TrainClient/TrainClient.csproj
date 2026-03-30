@@ -18,6 +18,8 @@
   <ItemGroup>
     <PackageReference Include="LibVLCSharp" Version="3.9.6" />
     <PackageReference Include="LibVLCSharp.WPF" Version="3.9.6" />
+    <PackageReference Include="OpenCvSharp4" Version="4.13.0.20260318" />
+    <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.13.0.20260302" />
     <PackageReference Include="System.IO.Ports" Version="10.0.5" />
     <PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.23" />
   </ItemGroup>

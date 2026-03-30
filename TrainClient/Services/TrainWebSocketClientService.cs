@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TrainClient.Data;
 using TrainClient.Models;
-
+using TrainClient.Services;
 namespace TrainClient.Services
 {
     public class TrainWebSocketClientService
@@ -27,6 +27,9 @@ namespace TrainClient.Services
 
         private const bool ForceOutputZero = true;
 
+        //영상 스트리밍 서비스
+        private readonly VideoStreamingService _videoStreamingService = new();
+
         public bool IsGpsConnected => _gpsService.IsConnected;
         public double? CurrentLat => _gpsService.CurrentLat;
         public double? CurrentLng => _gpsService.CurrentLng;
@@ -40,6 +43,7 @@ namespace TrainClient.Services
         public event Action<string>? LogReceived;
         public event Action<WsControlMessage>? ControlCommandReceived;
         public event Action<int[]>? TelemetryReceived;
+        public event Action<WsVideoSelectMessage>? VideoSelectReceived;
 
         public TrainWebSocketClientService(string serverUrl, string gpsPort, int gpsBaudRate)
         {
@@ -48,6 +52,21 @@ namespace TrainClient.Services
             _gpsService.LogReceived += msg => LogReceived?.Invoke(msg);
 
             TrainDataRepository.Validate();
+            _videoStreamingService.LogReceived += msg => LogReceived?.Invoke(msg);
+            _videoStreamingService.FrameReady += async frame =>
+            {
+                try
+                {
+                    if (_cts != null && !_cts.IsCancellationRequested)
+                    {
+                        await SendAsync(frame, _cts.Token);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    LogReceived?.Invoke($"video_frame 전송 실패: {ex.Message}");
+                }
+            };
         }
 
         public async Task StartAsync(bool resetProgress)
@@ -84,6 +103,7 @@ namespace TrainClient.Services
             try
             {
                 _cts?.Cancel();
+                _videoStreamingService.Stop();
 
                 if (_socket != null)
                 {
@@ -135,6 +155,7 @@ namespace TrainClient.Services
 
                     await SendAsync(new WsHelloMessage
                     {
+                        Train = _trainId,
                         ClientName = Environment.MachineName,
                         Timestamp = DateTime.UtcNow.ToString("O")
                     }, token);
@@ -235,6 +256,19 @@ namespace TrainClient.Services
                             }, token);
                         }
                     }
+                    else if (type == "video_select")
+                    {
+                        WsVideoSelectMessage? msg = JsonSerializer.Deserialize<WsVideoSelectMessage>(json);
+                        if (msg != null)
+                        {
+                            VideoSelectReceived?.Invoke(msg);
+                            HandleVideoSelect(msg);
+                        }
+                    }
+                    else if (type == "video_stop")
+                    {
+                        _videoStreamingService.Stop();
+                    }
                     else if (type == "ping")
                     {
                         await SendAsync(new
@@ -261,6 +295,7 @@ namespace TrainClient.Services
 
                     await SendAsync(new WsTelemetryMessage
                     {
+                        Train = _trainId,
                         Data = data,
                         Timestamp = DateTime.UtcNow.ToString("O")
                     }, token);
@@ -329,6 +364,7 @@ namespace TrainClient.Services
                 {
                     await SendAsync(new WsHeartbeatMessage
                     {
+                        Train = _trainId,
                         Timestamp = DateTime.UtcNow.ToString("O")
                     }, token);
                 }
@@ -446,7 +482,36 @@ namespace TrainClient.Services
 
             return frame;
         }
+        private void HandleVideoSelect(WsVideoSelectMessage msg)
+        {
+            try
+            {
+                if (msg.Train != _trainId)
+                {
+                    LogReceived?.Invoke($"video_select 무시: 현재 train={_trainId}, 요청 train={msg.Train}");
+                    return;
+                }
 
+                if (msg.CarNo < 1 || msg.CarNo > 12)
+                {
+                    LogReceived?.Invoke($"video_select 무시: 잘못된 객차 번호 car={msg.CarNo}");
+                    return;
+                }
+
+                string rtspUrl = CameraRouteService.GetRtspUrl(msg.Train, msg.CarNo);
+                if (string.IsNullOrWhiteSpace(rtspUrl))
+                {
+                    LogReceived?.Invoke($"video_select 실패: RTSP URL 없음 train={msg.Train}, car={msg.CarNo}");
+                    return;
+                }
+
+                _videoStreamingService.Start(msg.Train, msg.CarNo, rtspUrl);
+            }
+            catch (Exception ex)
+            {
+                LogReceived?.Invoke($"video_select 처리 실패: {ex.Message}");
+            }
+        }
         private static async Task SafeAwait(Task task)
         {
             try

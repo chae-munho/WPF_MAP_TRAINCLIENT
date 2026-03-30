@@ -6,44 +6,14 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using TrainClient.Models;
-
+using TrainClient.Services;
 namespace TrainClient.Popups
 {
     public partial class CameraPopup : Window
     {
         private readonly ObservableCollection<CameraAlarmItem> _alarms = new();
 
-        private readonly string[] _train1CarUrls =
-        {
-            "rtsp://admin:%40%40admin7434@192.168.1.100:554/0/onvif/profile1/media.smp", // 1
-            "rtsp://admin:%40%40admin7434@192.168.1.100:554/0/onvif/profile1/media.smp", // 2
-            "rtsp://admin:%40%40admin7434@192.168.1.100:554/0/onvif/profile1/media.smp", // 3
-            "rtsp://admin:%40%40admin7434@192.168.1.100:554/0/onvif/profile1/media.smp", // 4
-            "rtsp://admin:%40%40admin7434@192.168.1.100:554/0/onvif/profile1/media.smp", // 5
-            "rtsp://admin:%40%40admin7434@192.168.1.100:554/0/onvif/profile1/media.smp", // 6
-            "rtsp://admin:%40%40admin7434@192.168.1.100:554/0/onvif/profile1/media.smp", // 7
-            "rtsp://admin:%40%40admin7434@192.168.1.100:554/0/onvif/profile1/media.smp", // 8
-            "rtsp://admin:%40%40admin7434@192.168.1.100:554/0/onvif/profile1/media.smp", // 9
-            "rtsp://admin:%40%40admin7434@192.168.1.100:554/0/onvif/profile1/media.smp", // 10
-            "rtsp://admin:%40%40admin7434@192.168.1.100:554/0/onvif/profile1/media.smp", // 11
-            "rtsp://admin:%40%40admin7434@192.168.1.100:554/0/onvif/profile1/media.smp"  // 12
-        };
-
-        private readonly string[] _train2CarUrls =
-        {
-            "rtsp://admin:%40%40admin7434@192.168.1.100:554/0/onvif/profile1/media.smp", // 1
-            "rtsp://admin:%40%40admin7434@192.168.1.100:554/0/onvif/profile1/media.smp", // 2
-            "rtsp://admin:%40%40admin7434@192.168.1.100:554/0/onvif/profile1/media.smp", // 3
-            "rtsp://admin:%40%40admin7434@192.168.1.100:554/0/onvif/profile1/media.smp", // 4
-            "rtsp://admin:%40%40admin7434@192.168.1.100:554/0/onvif/profile1/media.smp", // 5
-            "rtsp://admin:%40%40admin7434@192.168.1.100:554/0/onvif/profile1/media.smp", // 6
-            "rtsp://admin:%40%40admin7434@192.168.1.100:554/0/onvif/profile1/media.smp", // 7
-            "rtsp://admin:%40%40admin7434@192.168.1.100:554/0/onvif/profile1/media.smp", // 8
-            "rtsp://admin:%40%40admin7434@192.168.1.100:554/0/onvif/profile1/media.smp", // 9
-            "rtsp://admin:%40%40admin7434@192.168.1.100:554/0/onvif/profile1/media.smp", // 10
-            "rtsp://admin:%40%40admin7434@192.168.1.100:554/0/onvif/profile1/media.smp", // 11
-            "rtsp://admin:%40%40admin7434@192.168.1.100:554/0/onvif/profile1/media.smp"  // 12
-        };
+       
 
         private LibVLC? _libVLC;
         private MediaPlayer? _mediaPlayer;
@@ -123,14 +93,7 @@ namespace TrainClient.Popups
 
         private string GetRtspUrl(int trainNo, int carNo)
         {
-            int index = carNo - 1;
-
-            if (index < 0 || index >= 12)
-                return string.Empty;
-
-            return trainNo == 1
-                ? _train1CarUrls[index]
-                : _train2CarUrls[index];
+            return CameraRouteService.GetRtspUrl(trainNo, carNo);
         }
 
         private void PlayUrl(string url)
