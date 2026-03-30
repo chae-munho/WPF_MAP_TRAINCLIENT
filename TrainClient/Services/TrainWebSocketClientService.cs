@@ -39,6 +39,7 @@ namespace TrainClient.Services
 
         public event Action<string>? LogReceived;
         public event Action<WsControlMessage>? ControlCommandReceived;
+        public event Action<int[]>? TelemetryReceived;
 
         public TrainWebSocketClientService(string serverUrl, string gpsPort, int gpsBaudRate)
         {
@@ -263,6 +264,8 @@ namespace TrainClient.Services
                         Data = data,
                         Timestamp = DateTime.UtcNow.ToString("O")
                     }, token);
+
+                    TelemetryReceived?.Invoke((int[])data.Clone());
 
                     if (data.Length > 0)
                     {

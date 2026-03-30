@@ -1,9 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "lItsUumA+gU=",
+  "dgSpecHash": "SwgoALXjZZ8=",
   "success": true,
   "projectFilePath": "C:\\ean\\문경모노레일\\WPF_MAP_TRAINCLIENT\\TrainClient\\TrainClient.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\munho\\.nuget\\packages\\libvlcsharp\\3.9.6\\libvlcsharp.3.9.6.nupkg.sha512",
+    "C:\\Users\\munho\\.nuget\\packages\\libvlcsharp.wpf\\3.9.6\\libvlcsharp.wpf.3.9.6.nupkg.sha512",
     "C:\\Users\\munho\\.nuget\\packages\\runtime.android-arm.runtime.native.system.io.ports\\10.0.5\\runtime.android-arm.runtime.native.system.io.ports.10.0.5.nupkg.sha512",
     "C:\\Users\\munho\\.nuget\\packages\\runtime.android-arm64.runtime.native.system.io.ports\\10.0.5\\runtime.android-arm64.runtime.native.system.io.ports.10.0.5.nupkg.sha512",
     "C:\\Users\\munho\\.nuget\\packages\\runtime.android-x64.runtime.native.system.io.ports\\10.0.5\\runtime.android-x64.runtime.native.system.io.ports.10.0.5.nupkg.sha512",
@@ -21,7 +23,8 @@
     "C:\\Users\\munho\\.nuget\\packages\\runtime.native.system.io.ports\\10.0.5\\runtime.native.system.io.ports.10.0.5.nupkg.sha512",
     "C:\\Users\\munho\\.nuget\\packages\\runtime.osx-arm64.runtime.native.system.io.ports\\10.0.5\\runtime.osx-arm64.runtime.native.system.io.ports.10.0.5.nupkg.sha512",
     "C:\\Users\\munho\\.nuget\\packages\\runtime.osx-x64.runtime.native.system.io.ports\\10.0.5\\runtime.osx-x64.runtime.native.system.io.ports.10.0.5.nupkg.sha512",
-    "C:\\Users\\munho\\.nuget\\packages\\system.io.ports\\10.0.5\\system.io.ports.10.0.5.nupkg.sha512"
+    "C:\\Users\\munho\\.nuget\\packages\\system.io.ports\\10.0.5\\system.io.ports.10.0.5.nupkg.sha512",
+    "C:\\Users\\munho\\.nuget\\packages\\videolan.libvlc.windows\\3.0.23\\videolan.libvlc.windows.3.0.23.nupkg.sha512"
   ],
   "logs": []
 }

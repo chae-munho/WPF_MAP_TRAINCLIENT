@@ -8,10 +8,31 @@
     ".NETCoreApp,Version=v10.0": {
       "TrainClient/1.0.0": {
         "dependencies": {
+          "LibVLCSharp": "3.9.6",
+          "LibVLCSharp.WPF": "3.9.6",
           "System.IO.Ports": "10.0.5"
         },
         "runtime": {
           "TrainClient.dll": {}
+        }
+      },
+      "LibVLCSharp/3.9.6": {
+        "runtime": {
+          "lib/net10.0/LibVLCSharp.dll": {
+            "assemblyVersion": "3.9.6.0",
+            "fileVersion": "3.9.6.0"
+          }
+        }
+      },
+      "LibVLCSharp.WPF/3.9.6": {
+        "dependencies": {
+          "LibVLCSharp": "3.9.6"
+        },
+        "runtime": {
+          "lib/net6.0-windows7.0/LibVLCSharp.WPF.dll": {
+            "assemblyVersion": "3.9.6.0",
+            "fileVersion": "3.9.6.0"
+          }
         }
       },
       "runtime.android-arm.runtime.native.System.IO.Ports/10.0.5": {
@@ -210,6 +231,20 @@
       "type": "project",
       "serviceable": false,
       "sha512": ""
+    },
+    "LibVLCSharp/3.9.6": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-MVkeFzsA5nGi/G94CluNif9BQPVkVPv0cikm63YBc8U+AQY8DJTsPp/6YZMM9J5IUBMHLWzQBbT/Iwhp6sc6oA==",
+      "path": "libvlcsharp/3.9.6",
+      "hashPath": "libvlcsharp.3.9.6.nupkg.sha512"
+    },
+    "LibVLCSharp.WPF/3.9.6": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-EsknDK6ibDvxDYRsgL1Wd/mnsTxsp3bmc+L7ogMVCCjnju3dNlN0a0DkY19zy47UmuaeAcrbKO/nFpEOvHcUwA==",
+      "path": "libvlcsharp.wpf/3.9.6",
+      "hashPath": "libvlcsharp.wpf.3.9.6.nupkg.sha512"
     },
     "runtime.android-arm.runtime.native.System.IO.Ports/10.0.5": {
       "type": "package",
