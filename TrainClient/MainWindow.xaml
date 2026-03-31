@@ -18,7 +18,7 @@
                 <TextBlock Text="관제 WS 주소:" VerticalAlignment="Center" Margin="0,0,8,0"/>
                 <TextBox x:Name="txtServerUrl"
                          Width="340"
-                         Text="ws://10.88.20.99:5090/ws/train"
+                         Text="ws://192.168.0.173:5090/ws/train"
                          Margin="0,0,10,0"/>
 
                 <TextBlock Text="GPS COM:" VerticalAlignment="Center" Margin="0,0,8,0"/>
