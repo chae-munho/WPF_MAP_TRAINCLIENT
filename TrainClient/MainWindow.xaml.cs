@@ -115,6 +115,8 @@ namespace TrainClient
 
                 await _clientService.StopAsync();
 
+                CloseCameraPopup();
+
                 AppendLog("연결 종료 완료 (진행 상태 유지)");
             }
             catch (Exception ex)
@@ -182,21 +184,19 @@ namespace TrainClient
             int bMaster = GetSafeValue(data, 61);
 
             if (aMaster == 1)
-            {
                 return aIntercomCar;
-            }
 
             if (aMaster == 0 && bMaster == 1)
-            {
                 return bIntercomCar;
-            }
 
             return 0;
         }
 
         private void HandleActiveIntercomTransition(int currentCarNo)
         {
-            // 호출 없음이면 아무것도 안 함
+            // 유지형 정책:
+            // 호출 없음(0)이 와도 기존 팝업 유지
+            // 새로운 호출이 왔을 때만 교체
             if (currentCarNo <= 0)
                 return;
 
@@ -209,7 +209,7 @@ namespace TrainClient
                 return;
             }
 
-            // 이전 호출과 다른 새 호출이면 기존 팝업 닫고 새 팝업 오픈
+            // 이전 호출과 다르면 기존 팝업 닫고 새 팝업 오픈
             if (currentCarNo != _previousActiveIntercomCar)
             {
                 AppendLog($"인터컴 호출 변경: {_previousActiveIntercomCar}번 -> {currentCarNo}번 객차");
@@ -225,29 +225,45 @@ namespace TrainClient
         {
             try
             {
-                if (_cameraPopup != null)
-                {
-                    _cameraPopup.Close();
-                    _cameraPopup = null;
-                }
+                CloseCameraPopup();
 
-                _cameraPopup = new CameraPopup
+                var popup = new CameraPopup
                 {
                     Owner = this
                 };
 
-                _cameraPopup.Closed += (_, _) =>
+                popup.Closed += (_, _) =>
                 {
-                    _cameraPopup = null;
+                    if (ReferenceEquals(_cameraPopup, popup))
+                        _cameraPopup = null;
                 };
 
+                _cameraPopup = popup;
                 _cameraPopup.ShowIntercom(carNo);
                 _cameraPopup.Show();
                 _cameraPopup.Activate();
+
+                _clientService?.StartVideoStreaming(carNo);
             }
             catch (Exception ex)
             {
                 AppendLog($"카메라 팝업 표시 실패: {ex.Message}");
+            }
+        }
+
+        private void CloseCameraPopup()
+        {
+            try
+            {
+                if (_cameraPopup != null)
+                {
+                    var popup = _cameraPopup;
+                    _cameraPopup = null;
+                    popup.Close();
+                }
+            }
+            catch
+            {
             }
         }
 
@@ -277,11 +293,7 @@ namespace TrainClient
         {
             try
             {
-                if (_cameraPopup != null)
-                {
-                    _cameraPopup.Close();
-                    _cameraPopup = null;
-                }
+                CloseCameraPopup();
 
                 if (_clientService != null)
                 {

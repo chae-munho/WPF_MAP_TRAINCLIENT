@@ -27,6 +27,9 @@ namespace TrainClient.Services
 
         private const bool ForceOutputZero = true;
 
+        // 영상 스트리밍 서비스
+        private readonly VideoStreamingService _videoStreamingService = new();
+
         public bool IsGpsConnected => _gpsService.IsConnected;
         public double? CurrentLat => _gpsService.CurrentLat;
         public double? CurrentLng => _gpsService.CurrentLng;
@@ -46,6 +49,9 @@ namespace TrainClient.Services
             _serverUri = new Uri(serverUrl);
             _gpsService = new GpsService(gpsPort, gpsBaudRate);
             _gpsService.LogReceived += msg => LogReceived?.Invoke(msg);
+
+            _videoStreamingService.LogReceived += msg => LogReceived?.Invoke(msg);
+            _videoStreamingService.FrameReady += OnVideoFrameReady;
 
             TrainDataRepository.Validate();
         }
@@ -83,6 +89,8 @@ namespace TrainClient.Services
         {
             try
             {
+                StopVideoStreaming();
+
                 _cts?.Cancel();
 
                 if (_socket != null)
@@ -116,6 +124,76 @@ namespace TrainClient.Services
             {
                 _cts?.Dispose();
                 _cts = null;
+            }
+        }
+
+        public void StartVideoStreaming(int carNo)
+        {
+            try
+            {
+                string rtspUrl = CameraRouteService.GetRtspUrlByCarNo(carNo);
+
+                if (string.IsNullOrWhiteSpace(rtspUrl))
+                {
+                    LogReceived?.Invoke($"영상 스트리밍 시작 실패: 객차 {carNo} RTSP 주소가 비어 있습니다.");
+                    return;
+                }
+
+                // 같은 객차 스트리밍 중이면 재시작 안 함
+                if (_videoStreamingService.IsStreaming &&
+                    _videoStreamingService.CurrentTrain == _trainId &&
+                    _videoStreamingService.CurrentCarNo == carNo)
+                {
+                    return;
+                }
+
+                _videoStreamingService.Start(_trainId, carNo, rtspUrl);
+                LogReceived?.Invoke($"영상 스트리밍 요청: train={_trainId}, car={carNo}");
+            }
+            catch (Exception ex)
+            {
+                LogReceived?.Invoke($"영상 스트리밍 시작 실패: {ex.Message}");
+            }
+        }
+
+        public void StopVideoStreaming()
+        {
+            int stoppedTrain = _videoStreamingService.CurrentTrain;
+
+            _videoStreamingService.Stop();
+
+            _ = SafeSendVideoStopAsync(stoppedTrain <= 0 ? _trainId : stoppedTrain);
+        }
+
+        private async Task SafeSendVideoStopAsync(int trainNo)
+        {
+            try
+            {
+                await SendAsync(new WsVideoStopMessage
+                {
+                    Train = trainNo,
+                    Timestamp = DateTime.UtcNow.ToString("O")
+                }, CancellationToken.None);
+            }
+            catch
+            {
+            }
+        }
+
+        private void OnVideoFrameReady(WsVideoFrameMessage frame)
+        {
+            _ = SafeSendVideoFrameAsync(frame);
+        }
+
+        private async Task SafeSendVideoFrameAsync(WsVideoFrameMessage frame)
+        {
+            try
+            {
+                await SendAsync(frame, CancellationToken.None);
+            }
+            catch (Exception ex)
+            {
+                LogReceived?.Invoke($"video_frame 전송 실패: {ex.Message}");
             }
         }
 

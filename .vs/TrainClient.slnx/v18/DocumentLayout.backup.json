@@ -104,7 +104,7 @@
               "RelativeDocumentMoniker": "TrainClient\\MainWindow.xaml.cs",
               "ToolTip": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\MainWindow.xaml.cs",
               "RelativeToolTip": "TrainClient\\MainWindow.xaml.cs",
-              "ViewState": "AgIAAAQBAAAAAAAAAAAYwBcBAAApAAAAAAAAAA==",
+              "ViewState": "AgIAABYBAAAAAAAAAAAIwCMBAAA7AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-03-18T04:09:10.498Z",
               "EditorCaption": ""
@@ -127,12 +127,11 @@
               "Title": "TrainWebSocketClientService.cs",
               "DocumentMoniker": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Services\\TrainWebSocketClientService.cs",
               "RelativeDocumentMoniker": "TrainClient\\Services\\TrainWebSocketClientService.cs",
-              "ToolTip": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Services\\TrainWebSocketClientService.cs*",
-              "RelativeToolTip": "TrainClient\\Services\\TrainWebSocketClientService.cs*",
-              "ViewState": "AgIAALIBAAAAAAAAAAAYwMUBAAAAAAAAAAAAAA==",
+              "ToolTip": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Services\\TrainWebSocketClientService.cs",
+              "RelativeToolTip": "TrainClient\\Services\\TrainWebSocketClientService.cs",
+              "ViewState": "AgIAAAACAAAAAAAAAAAYwBMCAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-20T05:48:14.175Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-20T05:48:14.175Z"
             },
             {
               "$type": "Document",
