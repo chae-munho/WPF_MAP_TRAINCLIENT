@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TrainClient.Data;
 using TrainClient.Models;
-using TrainClient.Services;
+
 namespace TrainClient.Services
 {
     public class TrainWebSocketClientService
@@ -27,9 +27,6 @@ namespace TrainClient.Services
 
         private const bool ForceOutputZero = true;
 
-        //영상 스트리밍 서비스
-        private readonly VideoStreamingService _videoStreamingService = new();
-
         public bool IsGpsConnected => _gpsService.IsConnected;
         public double? CurrentLat => _gpsService.CurrentLat;
         public double? CurrentLng => _gpsService.CurrentLng;
@@ -43,7 +40,6 @@ namespace TrainClient.Services
         public event Action<string>? LogReceived;
         public event Action<WsControlMessage>? ControlCommandReceived;
         public event Action<int[]>? TelemetryReceived;
-        public event Action<WsVideoSelectMessage>? VideoSelectReceived;
 
         public TrainWebSocketClientService(string serverUrl, string gpsPort, int gpsBaudRate)
         {
@@ -52,21 +48,6 @@ namespace TrainClient.Services
             _gpsService.LogReceived += msg => LogReceived?.Invoke(msg);
 
             TrainDataRepository.Validate();
-            _videoStreamingService.LogReceived += msg => LogReceived?.Invoke(msg);
-            _videoStreamingService.FrameReady += async frame =>
-            {
-                try
-                {
-                    if (_cts != null && !_cts.IsCancellationRequested)
-                    {
-                        await SendAsync(frame, _cts.Token);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    LogReceived?.Invoke($"video_frame 전송 실패: {ex.Message}");
-                }
-            };
         }
 
         public async Task StartAsync(bool resetProgress)
@@ -103,7 +84,6 @@ namespace TrainClient.Services
             try
             {
                 _cts?.Cancel();
-                _videoStreamingService.Stop();
 
                 if (_socket != null)
                 {
@@ -168,7 +148,7 @@ namespace TrainClient.Services
                     Task positionTask = PositionLoopAsync(linkedToken);
                     Task heartbeatTask = HeartbeatLoopAsync(linkedToken);
 
-                    Task completed = await Task.WhenAny(receiveTask, telemetryTask, positionTask, heartbeatTask);
+                    _ = await Task.WhenAny(receiveTask, telemetryTask, positionTask, heartbeatTask);
 
                     linkedCts.Cancel();
 
@@ -241,12 +221,14 @@ namespace TrainClient.Services
                     {
                         type = typeEl.GetString() ?? "";
                     }
+
                     System.Diagnostics.Debug.WriteLine($"[CLIENT] received type={type}, raw={json}");
                     LogReceived?.Invoke($"received type={type}, raw={json}");
 
                     if (type == "control")
                     {
                         System.Diagnostics.Debug.WriteLine("[CLIENT] control branch");
+
                         WsControlMessage? cmd = JsonSerializer.Deserialize<WsControlMessage>(json);
                         if (cmd != null)
                         {
@@ -262,22 +244,6 @@ namespace TrainClient.Services
                                 Timestamp = DateTime.UtcNow.ToString("O")
                             }, token);
                         }
-                    }
-                    else if (type == "video_select")
-                    {
-                        System.Diagnostics.Debug.WriteLine("[CLIENT] video_select branch");
-                        WsVideoSelectMessage? msg = JsonSerializer.Deserialize<WsVideoSelectMessage>(json);
-                        if (msg != null)
-                        {
-                            System.Diagnostics.Debug.WriteLine($"[CLIENT] video_select train={msg.Train}, car={msg.CarNo}");
-                            VideoSelectReceived?.Invoke(msg);
-                            HandleVideoSelect(msg);
-                        }
-                    }
-                    else if (type == "video_stop")
-                    {
-                        System.Diagnostics.Debug.WriteLine("[CLIENT] video_stop branch");
-                        _videoStreamingService.Stop();
                     }
                     else if (type == "ping")
                     {
@@ -469,7 +435,10 @@ namespace TrainClient.Services
             Array.Copy(bFrame, 0, combined, TrainDataRepository.FrameSizePerSide, TrainDataRepository.FrameSizePerSide);
 
             if (combined.Length != TrainDataRepository.TotalFrameSize)
-                throw new InvalidOperationException($"합쳐진 프레임 길이가 {TrainDataRepository.TotalFrameSize}가 아닙니다. 현재 길이: {combined.Length}");
+            {
+                throw new InvalidOperationException(
+                    $"합쳐진 프레임 길이가 {TrainDataRepository.TotalFrameSize}가 아닙니다. 현재 길이: {combined.Length}");
+            }
 
             if (ForceOutputZero)
             {
@@ -492,42 +461,7 @@ namespace TrainClient.Services
 
             return frame;
         }
-        private void HandleVideoSelect(WsVideoSelectMessage msg)
-        {
-            System.Diagnostics.Debug.WriteLine($"[CLIENT] HandleVideoSelect start train={msg.Train}, car={msg.CarNo}");
-            try
-            {
-                if (msg.Train != _trainId)
-                {
-                    System.Diagnostics.Debug.WriteLine($"[CLIENT] ignored: current train={_trainId}, requested train={msg.Train}");
-                    LogReceived?.Invoke($"video_select 무시: 현재 train={_trainId}, 요청 train={msg.Train}");
-                    return;
-                }
 
-                if (msg.CarNo < 1 || msg.CarNo > 12)
-                {
-                    System.Diagnostics.Debug.WriteLine($"[CLIENT] invalid car={msg.CarNo}");
-                    LogReceived?.Invoke($"video_select 무시: 잘못된 객차 번호 car={msg.CarNo}");
-                    return;
-                }
-
-                string rtspUrl = CameraRouteService.GetRtspUrl(msg.Train, msg.CarNo);
-                System.Diagnostics.Debug.WriteLine($"[CLIENT] resolved url={rtspUrl}");
-                if (string.IsNullOrWhiteSpace(rtspUrl))
-                {
-                    System.Diagnostics.Debug.WriteLine("[CLIENT] empty rtsp url");
-                    LogReceived?.Invoke($"video_select 실패: RTSP URL 없음 train={msg.Train}, car={msg.CarNo}");
-                    return;
-                }
-
-                _videoStreamingService.Start(msg.Train, msg.CarNo, rtspUrl);
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"[CLIENT] HandleVideoSelect error: {ex}");
-                LogReceived?.Invoke($"video_select 처리 실패: {ex.Message}");
-            }
-        }
         private static async Task SafeAwait(Task task)
         {
             try

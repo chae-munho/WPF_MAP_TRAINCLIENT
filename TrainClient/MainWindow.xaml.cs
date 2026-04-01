@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
@@ -16,9 +15,8 @@ namespace TrainClient
 
         private CameraPopup? _cameraPopup;
 
-        // A면(기차1), B면(기차2) 인터컴 이전 상태 저장
-        private int _previousTrain1IntercomCar = 0;
-        private int _previousTrain2IntercomCar = 0;
+        // 현재 표시 중인 인터컴 호출 번호
+        private int _previousActiveIntercomCar = 0;
 
         public MainWindow()
         {
@@ -155,18 +153,8 @@ namespace TrainClient
             {
                 try
                 {
-                    // combined:
-                    // A면 0~46
-                    // B면 47~93
-                    // 인터컴 호출 객차:
-                    // A면 index 12
-                    // B면 index 59 (= 47 + 12)
-
-                    int train1IntercomCar = GetSafeValue(data, 12);
-                    int train2IntercomCar = GetSafeValue(data, 59);
-
-                    HandleIntercomTransition(trainNo: 1, currentCarNo: train1IntercomCar, ref _previousTrain1IntercomCar);
-                    HandleIntercomTransition(trainNo: 2, currentCarNo: train2IntercomCar, ref _previousTrain2IntercomCar);
+                    int activeCarNo = GetActiveIntercomCarNo(data);
+                    HandleActiveIntercomTransition(activeCarNo);
                 }
                 catch (Exception ex)
                 {
@@ -175,42 +163,92 @@ namespace TrainClient
             }));
         }
 
-        private void HandleIntercomTransition(int trainNo, int currentCarNo, ref int previousCarNo)
+        private int GetActiveIntercomCarNo(int[] data)
         {
-            // 0 -> n 으로 바뀔 때만 새 알람 추가
-            if (currentCarNo > 0 && previousCarNo == 0)
+            // combined:
+            // A면: 0 ~ 46
+            // B면: 47 ~ 93
+            //
+            // A면 인터컴 호출 번호: 12
+            // A면 마스터 여부:     14
+            //
+            // B면 인터컴 호출 번호: 59 (= 47 + 12)
+            // B면 마스터 여부:     61 (= 47 + 14)
+
+            int aIntercomCar = GetSafeValue(data, 12);
+            int aMaster = GetSafeValue(data, 14);
+
+            int bIntercomCar = GetSafeValue(data, 59);
+            int bMaster = GetSafeValue(data, 61);
+
+            if (aMaster == 1)
             {
-                AppendLog($"인터컴 호출 감지: [기차{trainNo}] {currentCarNo}번 객차");
-
-                EnsureCameraPopup();
-                _cameraPopup!.AddAlarm(trainNo, currentCarNo);
-
-                if (!_cameraPopup.IsVisible)
-                    _cameraPopup.Show();
+                return aIntercomCar;
             }
 
-            previousCarNo = currentCarNo;
+            if (aMaster == 0 && bMaster == 1)
+            {
+                return bIntercomCar;
+            }
+
+            return 0;
         }
 
-        private void EnsureCameraPopup()
+        private void HandleActiveIntercomTransition(int currentCarNo)
         {
-            if (_cameraPopup != null)
-            {
-                if (_cameraPopup.IsLoaded)
-                    return;
+            // 호출 없음이면 아무것도 안 함
+            if (currentCarNo <= 0)
+                return;
 
-                _cameraPopup = null;
+            // 이전 호출이 없으면 새 팝업 오픈
+            if (_previousActiveIntercomCar == 0)
+            {
+                AppendLog($"인터컴 호출 감지: {currentCarNo}번 객차");
+                ShowNewCameraPopup(currentCarNo);
+                _previousActiveIntercomCar = currentCarNo;
+                return;
             }
 
-            _cameraPopup = new CameraPopup
+            // 이전 호출과 다른 새 호출이면 기존 팝업 닫고 새 팝업 오픈
+            if (currentCarNo != _previousActiveIntercomCar)
             {
-                Owner = this
-            };
+                AppendLog($"인터컴 호출 변경: {_previousActiveIntercomCar}번 -> {currentCarNo}번 객차");
+                ShowNewCameraPopup(currentCarNo);
+                _previousActiveIntercomCar = currentCarNo;
+                return;
+            }
 
-            _cameraPopup.Closed += (_, _) =>
+            // 같은 호출이면 유지
+        }
+
+        private void ShowNewCameraPopup(int carNo)
+        {
+            try
             {
-                _cameraPopup = null;
-            };
+                if (_cameraPopup != null)
+                {
+                    _cameraPopup.Close();
+                    _cameraPopup = null;
+                }
+
+                _cameraPopup = new CameraPopup
+                {
+                    Owner = this
+                };
+
+                _cameraPopup.Closed += (_, _) =>
+                {
+                    _cameraPopup = null;
+                };
+
+                _cameraPopup.ShowIntercom(carNo);
+                _cameraPopup.Show();
+                _cameraPopup.Activate();
+            }
+            catch (Exception ex)
+            {
+                AppendLog($"카메라 팝업 표시 실패: {ex.Message}");
+            }
         }
 
         private static int GetSafeValue(int[] data, int index)

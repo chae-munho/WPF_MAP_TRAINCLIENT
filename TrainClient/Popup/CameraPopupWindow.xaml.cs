@@ -1,31 +1,23 @@
 ﻿using LibVLCSharp.Shared;
 using LibVLCSharp.WPF;
 using System;
-using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
-using TrainClient.Models;
 using TrainClient.Services;
+
 namespace TrainClient.Popups
 {
     public partial class CameraPopup : Window
     {
-        private readonly ObservableCollection<CameraAlarmItem> _alarms = new();
-
-       
-
         private LibVLC? _libVLC;
         private MediaPlayer? _mediaPlayer;
         private VideoView? _videoView;
         private string _currentUrl = "";
 
+        public int CurrentCarNo { get; private set; }
+
         public CameraPopup()
         {
             InitializeComponent();
-
-            lstAlarms.ItemsSource = _alarms;
-
             InitializeVlc();
         }
 
@@ -57,43 +49,29 @@ namespace TrainClient.Popups
             }
         }
 
-        public void AddAlarm(int trainNo, int carNo)
+        public void ShowIntercom(int carNo)
         {
             if (carNo < 1 || carNo > 12)
-                return;
-
-            bool exists = _alarms.Any(x => x.TrainNo == trainNo && x.CarNo == carNo);
-            if (!exists)
             {
-                _alarms.Add(new CameraAlarmItem
-                {
-                    TrainNo = trainNo,
-                    CarNo = carNo
-                });
+                txtSelectedTitle.Text = "잘못된 객차 호출";
+                txtSelectedUrl.Text = "-";
+                txtVideoPlaceholder.Visibility = Visibility.Visible;
+                return;
             }
 
-            if (lstAlarms.SelectedItem == null)
-            {
-                lstAlarms.SelectedItem = _alarms.FirstOrDefault();
-            }
-        }
+            CurrentCarNo = carNo;
 
-        private void lstAlarms_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (lstAlarms.SelectedItem is not CameraAlarmItem selected)
-                return;
+            string url = GetRtspUrl(carNo);
 
-            string url = GetRtspUrl(selected.TrainNo, selected.CarNo);
-
-            txtSelectedTitle.Text = $"[기차{selected.TrainNo}] {selected.CarNo}번 객차";
+            txtSelectedTitle.Text = $"{carNo}번 객차 호출";
             txtSelectedUrl.Text = url;
 
             PlayUrl(url);
         }
 
-        private string GetRtspUrl(int trainNo, int carNo)
+        private string GetRtspUrl(int carNo)
         {
-            return CameraRouteService.GetRtspUrl(trainNo, carNo);
+            return CameraRouteService.GetRtspUrlByCarNo(carNo);
         }
 
         private void PlayUrl(string url)
@@ -107,10 +85,8 @@ namespace TrainClient.Popups
                     return;
                 }
 
-                // 같은 URL이면 다시 재생하지 않음
                 if (string.Equals(_currentUrl, url, StringComparison.OrdinalIgnoreCase))
                 {
-                    txtSelectedUrl.Text = url;
                     txtVideoPlaceholder.Visibility = Visibility.Collapsed;
                     return;
                 }
