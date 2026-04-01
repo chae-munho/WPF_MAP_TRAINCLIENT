@@ -27,6 +27,9 @@ namespace TrainClient.Services
 
         private const bool ForceOutputZero = true;
 
+        //옛날 프레임은 버리는 용도로 사용
+        private int _videoFrameSending = 0;
+
         // 영상 스트리밍 서비스
         private readonly VideoStreamingService _videoStreamingService = new();
 
@@ -187,6 +190,9 @@ namespace TrainClient.Services
 
         private async Task SafeSendVideoFrameAsync(WsVideoFrameMessage frame)
         {
+            if (Interlocked.Exchange(ref _videoFrameSending, 1) == 1)
+                return; // 이전 영상 프레임이 아직 전송 중이면 이번 프레임은 버림
+
             try
             {
                 await SendAsync(frame, CancellationToken.None);
@@ -194,6 +200,10 @@ namespace TrainClient.Services
             catch (Exception ex)
             {
                 LogReceived?.Invoke($"video_frame 전송 실패: {ex.Message}");
+            }
+            finally
+            {
+                Volatile.Write(ref _videoFrameSending, 0);
             }
         }
 

@@ -86,7 +86,7 @@ namespace TrainClient.Services
                         continue;
                     }
 
-                    Cv2.Resize(frame, frame, new OpenCvSharp.Size(640, 360));
+                    Cv2.Resize(frame, frame, new OpenCvSharp.Size(400, 225));
 
                     byte[] jpegBytes = frame.ToBytes(".jpg");
                     string base64 = Convert.ToBase64String(jpegBytes);
@@ -102,7 +102,7 @@ namespace TrainClient.Services
                         Timestamp = DateTime.UtcNow.ToString("O")
                     });
 
-                    Thread.Sleep(150);
+                    Thread.Sleep(300);
                 }
             }
             catch (Exception ex)
