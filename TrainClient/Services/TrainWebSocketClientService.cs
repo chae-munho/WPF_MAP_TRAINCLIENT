@@ -234,12 +234,19 @@ namespace TrainClient.Services
                 try
                 {
                     using JsonDocument doc = JsonDocument.Parse(json);
-                    string type = doc.RootElement.TryGetProperty("type", out JsonElement typeEl)
-                        ? typeEl.GetString() ?? ""
-                        : "";
+
+                    string type = "";
+                    if (doc.RootElement.TryGetProperty("type", out JsonElement typeEl) ||
+                        doc.RootElement.TryGetProperty("Type", out typeEl))
+                    {
+                        type = typeEl.GetString() ?? "";
+                    }
+                    System.Diagnostics.Debug.WriteLine($"[CLIENT] received type={type}, raw={json}");
+                    LogReceived?.Invoke($"received type={type}, raw={json}");
 
                     if (type == "control")
                     {
+                        System.Diagnostics.Debug.WriteLine("[CLIENT] control branch");
                         WsControlMessage? cmd = JsonSerializer.Deserialize<WsControlMessage>(json);
                         if (cmd != null)
                         {
@@ -258,15 +265,18 @@ namespace TrainClient.Services
                     }
                     else if (type == "video_select")
                     {
+                        System.Diagnostics.Debug.WriteLine("[CLIENT] video_select branch");
                         WsVideoSelectMessage? msg = JsonSerializer.Deserialize<WsVideoSelectMessage>(json);
                         if (msg != null)
                         {
+                            System.Diagnostics.Debug.WriteLine($"[CLIENT] video_select train={msg.Train}, car={msg.CarNo}");
                             VideoSelectReceived?.Invoke(msg);
                             HandleVideoSelect(msg);
                         }
                     }
                     else if (type == "video_stop")
                     {
+                        System.Diagnostics.Debug.WriteLine("[CLIENT] video_stop branch");
                         _videoStreamingService.Stop();
                     }
                     else if (type == "ping")
@@ -484,23 +494,28 @@ namespace TrainClient.Services
         }
         private void HandleVideoSelect(WsVideoSelectMessage msg)
         {
+            System.Diagnostics.Debug.WriteLine($"[CLIENT] HandleVideoSelect start train={msg.Train}, car={msg.CarNo}");
             try
             {
                 if (msg.Train != _trainId)
                 {
+                    System.Diagnostics.Debug.WriteLine($"[CLIENT] ignored: current train={_trainId}, requested train={msg.Train}");
                     LogReceived?.Invoke($"video_select 무시: 현재 train={_trainId}, 요청 train={msg.Train}");
                     return;
                 }
 
                 if (msg.CarNo < 1 || msg.CarNo > 12)
                 {
+                    System.Diagnostics.Debug.WriteLine($"[CLIENT] invalid car={msg.CarNo}");
                     LogReceived?.Invoke($"video_select 무시: 잘못된 객차 번호 car={msg.CarNo}");
                     return;
                 }
 
                 string rtspUrl = CameraRouteService.GetRtspUrl(msg.Train, msg.CarNo);
+                System.Diagnostics.Debug.WriteLine($"[CLIENT] resolved url={rtspUrl}");
                 if (string.IsNullOrWhiteSpace(rtspUrl))
                 {
+                    System.Diagnostics.Debug.WriteLine("[CLIENT] empty rtsp url");
                     LogReceived?.Invoke($"video_select 실패: RTSP URL 없음 train={msg.Train}, car={msg.CarNo}");
                     return;
                 }
@@ -509,6 +524,7 @@ namespace TrainClient.Services
             }
             catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"[CLIENT] HandleVideoSelect error: {ex}");
                 LogReceived?.Invoke($"video_select 처리 실패: {ex.Message}");
             }
         }

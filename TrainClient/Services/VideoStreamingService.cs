@@ -20,10 +20,13 @@ namespace TrainClient.Services
 
         public void Start(int trainNo, int carNo, string rtspUrl)
         {
+            System.Diagnostics.Debug.WriteLine($"[VIDEO] Start train={trainNo}, car={carNo}, url={rtspUrl}");
+
             Stop();
 
             if (string.IsNullOrWhiteSpace(rtspUrl))
             {
+                System.Diagnostics.Debug.WriteLine("[VIDEO] empty url");
                 LogReceived?.Invoke("영상 스트리밍 시작 실패: RTSP URL이 비어 있습니다.");
                 return;
             }
@@ -58,12 +61,14 @@ namespace TrainClient.Services
 
         private void StreamLoop(int trainNo, int carNo, string rtspUrl, CancellationToken token)
         {
+            System.Diagnostics.Debug.WriteLine($"[VIDEO] StreamLoop begin train={trainNo}, car={carNo}");
             try
             {
                 using var capture = new VideoCapture(rtspUrl);
 
                 if (!capture.IsOpened())
                 {
+                    System.Diagnostics.Debug.WriteLine($"[VIDEO] RTSP open failed: {rtspUrl}");
                     LogReceived?.Invoke($"RTSP 연결 실패: {rtspUrl}");
                     return;
                 }
