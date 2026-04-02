@@ -12,14 +12,19 @@ namespace TrainClient.Services
 {
     public class TrainWebSocketClientService
     {
-        private readonly Uri _serverUri;
+        private readonly Uri _mainServerUri;
+        private readonly Uri _videoServerUri;
         private readonly GpsService _gpsService;
 
         private CancellationTokenSource? _cts;
-        private Task? _runTask;
+        private Task? _mainRunTask;
+        private Task? _videoRunTask;
 
-        private ClientWebSocket? _socket;
-        private readonly SemaphoreSlim _sendLock = new(1, 1);
+        private ClientWebSocket? _mainSocket;
+        private ClientWebSocket? _videoSocket;
+
+        private readonly SemaphoreSlim _mainSendLock = new(1, 1);
+        private readonly SemaphoreSlim _videoSendLock = new(1, 1);
 
         private int _currentFrameIndex = 0;
         private int _currentPositionIndex = 0;
@@ -27,18 +32,21 @@ namespace TrainClient.Services
 
         private const bool ForceOutputZero = true;
 
-        //옛날 프레임은 버리는 용도로 사용
         private int _videoFrameSending = 0;
 
-        // 영상 스트리밍 서비스
         private readonly VideoStreamingService _videoStreamingService = new();
 
         public bool IsGpsConnected => _gpsService.IsConnected;
         public double? CurrentLat => _gpsService.CurrentLat;
         public double? CurrentLng => _gpsService.CurrentLng;
 
-        public bool IsConnected =>
-            _socket != null && _socket.State == WebSocketState.Open;
+        public bool IsMainConnected =>
+            _mainSocket != null && _mainSocket.State == WebSocketState.Open;
+
+        public bool IsVideoConnected =>
+            _videoSocket != null && _videoSocket.State == WebSocketState.Open;
+
+        public bool IsConnected => IsMainConnected;
 
         public int CurrentFrameIndex => _currentFrameIndex;
         public int CurrentPositionIndex => _currentPositionIndex;
@@ -47,9 +55,10 @@ namespace TrainClient.Services
         public event Action<WsControlMessage>? ControlCommandReceived;
         public event Action<int[]>? TelemetryReceived;
 
-        public TrainWebSocketClientService(string serverUrl, string gpsPort, int gpsBaudRate)
+        public TrainWebSocketClientService(string serverUrl, string videoServerUrl, string gpsPort, int gpsBaudRate)
         {
-            _serverUri = new Uri(serverUrl);
+            _mainServerUri = new Uri(serverUrl);
+            _videoServerUri = new Uri(videoServerUrl);
             _gpsService = new GpsService(gpsPort, gpsBaudRate);
             _gpsService.LogReceived += msg => LogReceived?.Invoke(msg);
 
@@ -78,7 +87,9 @@ namespace TrainClient.Services
 
             _gpsService.Start();
 
-            _runTask = Task.Run(() => RunClientLoopAsync(_cts.Token));
+            _mainRunTask = Task.Run(() => RunMainSocketLoopAsync(_cts.Token));
+            _videoRunTask = Task.Run(() => RunVideoSocketLoopAsync(_cts.Token));
+
             await Task.CompletedTask;
         }
 
@@ -96,13 +107,13 @@ namespace TrainClient.Services
 
                 _cts?.Cancel();
 
-                if (_socket != null)
+                if (_mainSocket != null)
                 {
                     try
                     {
-                        if (_socket.State == WebSocketState.Open)
+                        if (_mainSocket.State == WebSocketState.Open)
                         {
-                            await _socket.CloseAsync(
+                            await _mainSocket.CloseAsync(
                                 WebSocketCloseStatus.NormalClosure,
                                 "client stop",
                                 CancellationToken.None);
@@ -112,12 +123,35 @@ namespace TrainClient.Services
                     {
                     }
 
-                    _socket.Dispose();
-                    _socket = null;
+                    _mainSocket.Dispose();
+                    _mainSocket = null;
                 }
 
-                if (_runTask != null)
-                    await _runTask;
+                if (_videoSocket != null)
+                {
+                    try
+                    {
+                        if (_videoSocket.State == WebSocketState.Open)
+                        {
+                            await _videoSocket.CloseAsync(
+                                WebSocketCloseStatus.NormalClosure,
+                                "client stop",
+                                CancellationToken.None);
+                        }
+                    }
+                    catch
+                    {
+                    }
+
+                    _videoSocket.Dispose();
+                    _videoSocket = null;
+                }
+
+                if (_mainRunTask != null)
+                    await _mainRunTask;
+
+                if (_videoRunTask != null)
+                    await _videoRunTask;
 
                 await _gpsService.StopAsync();
 
@@ -127,6 +161,8 @@ namespace TrainClient.Services
             {
                 _cts?.Dispose();
                 _cts = null;
+                _mainRunTask = null;
+                _videoRunTask = null;
             }
         }
 
@@ -142,7 +178,6 @@ namespace TrainClient.Services
                     return;
                 }
 
-                // 같은 객차 스트리밍 중이면 재시작 안 함
                 if (_videoStreamingService.IsStreaming &&
                     _videoStreamingService.CurrentTrain == _trainId &&
                     _videoStreamingService.CurrentCarNo == carNo)
@@ -172,7 +207,7 @@ namespace TrainClient.Services
         {
             try
             {
-                await SendAsync(new WsVideoStopMessage
+                await SendVideoAsync(new WsVideoStopMessage
                 {
                     Train = trainNo,
                     Timestamp = DateTime.UtcNow.ToString("O")
@@ -191,11 +226,11 @@ namespace TrainClient.Services
         private async Task SafeSendVideoFrameAsync(WsVideoFrameMessage frame)
         {
             if (Interlocked.Exchange(ref _videoFrameSending, 1) == 1)
-                return; // 이전 영상 프레임이 아직 전송 중이면 이번 프레임은 버림
+                return;
 
             try
             {
-                await SendAsync(frame, CancellationToken.None);
+                await SendVideoAsync(frame, CancellationToken.None);
             }
             catch (Exception ex)
             {
@@ -207,21 +242,21 @@ namespace TrainClient.Services
             }
         }
 
-        private async Task RunClientLoopAsync(CancellationToken token)
+        private async Task RunMainSocketLoopAsync(CancellationToken token)
         {
             while (!token.IsCancellationRequested)
             {
-                using var socket = new ClientWebSocket();
-                _socket = socket;
-                socket.Options.KeepAliveInterval = TimeSpan.FromSeconds(20);
+                using var mainSocket = new ClientWebSocket();
+                _mainSocket = mainSocket;
+                mainSocket.Options.KeepAliveInterval = TimeSpan.FromSeconds(20);
 
                 try
                 {
-                    LogReceived?.Invoke($"관제 서버 접속 시도: {_serverUri}");
-                    await socket.ConnectAsync(_serverUri, token);
-                    LogReceived?.Invoke("관제 서버 WebSocket 연결 성공");
+                    LogReceived?.Invoke($"관제 서버(일반) 접속 시도: {_mainServerUri}");
+                    await mainSocket.ConnectAsync(_mainServerUri, token);
+                    LogReceived?.Invoke("관제 서버(일반) WebSocket 연결 성공");
 
-                    await SendAsync(new WsHelloMessage
+                    await SendMainAsync(new WsHelloMessage
                     {
                         Train = _trainId,
                         ClientName = Environment.MachineName,
@@ -231,7 +266,7 @@ namespace TrainClient.Services
                     using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(token);
                     CancellationToken linkedToken = linkedCts.Token;
 
-                    Task receiveTask = ReceiveLoopAsync(socket, linkedToken);
+                    Task receiveTask = ReceiveLoopAsync(mainSocket, linkedToken);
                     Task telemetryTask = TelemetryLoopAsync(linkedToken);
                     Task positionTask = PositionLoopAsync(linkedToken);
                     Task heartbeatTask = HeartbeatLoopAsync(linkedToken);
@@ -251,15 +286,15 @@ namespace TrainClient.Services
                 }
                 catch (Exception ex)
                 {
-                    LogReceived?.Invoke($"WebSocket 연결/통신 오류: {ex.Message}");
+                    LogReceived?.Invoke($"일반 WebSocket 연결/통신 오류: {ex.Message}");
                 }
                 finally
                 {
                     try
                     {
-                        if (socket.State == WebSocketState.Open)
+                        if (mainSocket.State == WebSocketState.Open)
                         {
-                            await socket.CloseAsync(
+                            await mainSocket.CloseAsync(
                                 WebSocketCloseStatus.NormalClosure,
                                 "reconnect",
                                 CancellationToken.None);
@@ -269,12 +304,80 @@ namespace TrainClient.Services
                     {
                     }
 
-                    _socket = null;
+                    _mainSocket = null;
                 }
 
                 if (!token.IsCancellationRequested)
                 {
-                    LogReceived?.Invoke("3초 후 재접속 시도...");
+                    LogReceived?.Invoke("일반 WS 3초 후 재접속 시도...");
+                    try
+                    {
+                        await Task.Delay(3000, token);
+                    }
+                    catch
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+
+        private async Task RunVideoSocketLoopAsync(CancellationToken token)
+        {
+            while (!token.IsCancellationRequested)
+            {
+                using var videoSocket = new ClientWebSocket();
+                _videoSocket = videoSocket;
+                videoSocket.Options.KeepAliveInterval = TimeSpan.FromSeconds(20);
+
+                try
+                {
+                    LogReceived?.Invoke($"관제 서버(영상) 접속 시도: {_videoServerUri}");
+                    await videoSocket.ConnectAsync(_videoServerUri, token);
+                    LogReceived?.Invoke("관제 서버(영상) WebSocket 연결 성공");
+
+                    await SendVideoAsync(new WsHelloMessage
+                    {
+                        Train = _trainId,
+                        ClientName = Environment.MachineName,
+                        Timestamp = DateTime.UtcNow.ToString("O")
+                    }, token);
+
+                    while (!token.IsCancellationRequested && videoSocket.State == WebSocketState.Open)
+                    {
+                        await Task.Delay(1000, token);
+                    }
+                }
+                catch (OperationCanceledException)
+                {
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    LogReceived?.Invoke($"영상 WebSocket 연결/통신 오류: {ex.Message}");
+                }
+                finally
+                {
+                    try
+                    {
+                        if (videoSocket.State == WebSocketState.Open)
+                        {
+                            await videoSocket.CloseAsync(
+                                WebSocketCloseStatus.NormalClosure,
+                                "reconnect",
+                                CancellationToken.None);
+                        }
+                    }
+                    catch
+                    {
+                    }
+
+                    _videoSocket = null;
+                }
+
+                if (!token.IsCancellationRequested)
+                {
+                    LogReceived?.Invoke("영상 WS 3초 후 재접속 시도...");
                     try
                     {
                         await Task.Delay(3000, token);
@@ -310,19 +413,14 @@ namespace TrainClient.Services
                         type = typeEl.GetString() ?? "";
                     }
 
-                    System.Diagnostics.Debug.WriteLine($"[CLIENT] received type={type}, raw={json}");
-                    LogReceived?.Invoke($"received type={type}, raw={json}");
-
                     if (type == "control")
                     {
-                        System.Diagnostics.Debug.WriteLine("[CLIENT] control branch");
-
                         WsControlMessage? cmd = JsonSerializer.Deserialize<WsControlMessage>(json);
                         if (cmd != null)
                         {
                             ControlCommandReceived?.Invoke(cmd);
 
-                            await SendAsync(new WsControlAckMessage
+                            await SendMainAsync(new WsControlAckMessage
                             {
                                 Train = cmd.Train,
                                 Operation = cmd.Operation,
@@ -335,7 +433,7 @@ namespace TrainClient.Services
                     }
                     else if (type == "ping")
                     {
-                        await SendAsync(new
+                        await SendMainAsync(new
                         {
                             type = "pong",
                             timestamp = DateTime.UtcNow.ToString("O")
@@ -353,11 +451,11 @@ namespace TrainClient.Services
         {
             while (!token.IsCancellationRequested)
             {
-                if (IsConnected)
+                if (IsMainConnected)
                 {
                     int[] data = GetCurrentFrameAndAdvance();
 
-                    await SendAsync(new WsTelemetryMessage
+                    await SendMainAsync(new WsTelemetryMessage
                     {
                         Train = _trainId,
                         Data = data,
@@ -367,13 +465,9 @@ namespace TrainClient.Services
                     TelemetryReceived?.Invoke((int[])data.Clone());
 
                     if (data.Length > 0)
-                    {
                         LogReceived?.Invoke($"telemetry 전송 완료 (첫번째 열차ID={data[0]}, 현재 frame={_currentFrameIndex})");
-                    }
                     else
-                    {
                         LogReceived?.Invoke("telemetry 전송 완료");
-                    }
                 }
 
                 await Task.Delay(1000, token);
@@ -384,7 +478,7 @@ namespace TrainClient.Services
         {
             while (!token.IsCancellationRequested)
             {
-                if (IsConnected)
+                if (IsMainConnected)
                 {
                     double lat;
                     double lng;
@@ -404,7 +498,7 @@ namespace TrainClient.Services
                         source = "fake";
                     }
 
-                    await SendAsync(new WsPositionMessage
+                    await SendMainAsync(new WsPositionMessage
                     {
                         Train = _trainId,
                         Lat = lat,
@@ -424,9 +518,9 @@ namespace TrainClient.Services
         {
             while (!token.IsCancellationRequested)
             {
-                if (IsConnected)
+                if (IsMainConnected)
                 {
-                    await SendAsync(new WsHeartbeatMessage
+                    await SendMainAsync(new WsHeartbeatMessage
                     {
                         Train = _trainId,
                         Timestamp = DateTime.UtcNow.ToString("O")
@@ -437,20 +531,20 @@ namespace TrainClient.Services
             }
         }
 
-        private async Task SendAsync<T>(T payload, CancellationToken token)
+        private async Task SendMainAsync<T>(T payload, CancellationToken token)
         {
-            if (_socket == null || _socket.State != WebSocketState.Open)
+            if (_mainSocket == null || _mainSocket.State != WebSocketState.Open)
                 return;
 
             string json = JsonSerializer.Serialize(payload);
             byte[] bytes = Encoding.UTF8.GetBytes(json);
 
-            await _sendLock.WaitAsync(token);
+            await _mainSendLock.WaitAsync(token);
             try
             {
-                if (_socket != null && _socket.State == WebSocketState.Open)
+                if (_mainSocket != null && _mainSocket.State == WebSocketState.Open)
                 {
-                    await _socket.SendAsync(
+                    await _mainSocket.SendAsync(
                         new ArraySegment<byte>(bytes),
                         WebSocketMessageType.Text,
                         true,
@@ -459,7 +553,33 @@ namespace TrainClient.Services
             }
             finally
             {
-                _sendLock.Release();
+                _mainSendLock.Release();
+            }
+        }
+
+        private async Task SendVideoAsync<T>(T payload, CancellationToken token)
+        {
+            if (_videoSocket == null || _videoSocket.State != WebSocketState.Open)
+                return;
+
+            string json = JsonSerializer.Serialize(payload);
+            byte[] bytes = Encoding.UTF8.GetBytes(json);
+
+            await _videoSendLock.WaitAsync(token);
+            try
+            {
+                if (_videoSocket != null && _videoSocket.State == WebSocketState.Open)
+                {
+                    await _videoSocket.SendAsync(
+                        new ArraySegment<byte>(bytes),
+                        WebSocketMessageType.Text,
+                        true,
+                        token);
+                }
+            }
+            finally
+            {
+                _videoSendLock.Release();
             }
         }
 

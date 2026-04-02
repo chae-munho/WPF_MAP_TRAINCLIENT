@@ -13,46 +13,129 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Border Grid.Row="0" Padding="10" BorderBrush="Gray" BorderThickness="1" CornerRadius="8">
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                <TextBlock Text="관제 WS 주소:" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                <TextBox x:Name="txtServerUrl"
-                         Width="340"
-                         Text="ws://192.168.0.173:5090/ws/train"
-                         Margin="0,0,10,0"/>
+        <!-- 연결 설정 -->
+        <Border Grid.Row="0"
+                Padding="10"
+                BorderBrush="Gray"
+                BorderThickness="1"
+                CornerRadius="8">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-                <TextBlock Text="GPS COM:" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                <TextBox x:Name="txtGpsPort" Width="100" Text="COM6" Margin="0,0,10,0"/>
+                <!-- 1행 -->
+                <Grid Grid.Row="0" Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="340"/>
+                        <ColumnDefinition Width="15"/>
 
-                <TextBlock Text="Baud:" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                <TextBox x:Name="txtBaudRate" Width="100" Text="9600" Margin="0,0,10,0"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="15"/>
 
-                <Button x:Name="btnConnect"
-                        Content="처음부터 접속"
-                        Width="120"
-                        Height="32"
-                        Margin="0,0,8,0"
-                        Click="btnConnect_Click"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="20"/>
 
-                <Button x:Name="btnResumeConnect"
-                        Content="이어서 접속"
-                        Width="120"
-                        Height="32"
-                        Margin="0,0,8,0"
-                        Click="btnResumeConnect_Click"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
 
-                <Button x:Name="btnDisconnect"
-                        Content="연결 종료"
-                        Width="120"
-                        Height="32"
-                        Click="btnDisconnect_Click"/>
-            </StackPanel>
+                    <TextBlock Grid.Column="0"
+                               Text="관제 WS 주소:"
+                               VerticalAlignment="Center"
+                               Margin="0,0,8,0"/>
+
+                    <TextBox Grid.Column="1"
+                             x:Name="txtServerUrl"
+                             Width="340"
+                             Text="ws://192.168.0.173:5090/ws/train"
+                             VerticalAlignment="Center"/>
+
+                    <TextBlock Grid.Column="3"
+                               Text="GPS COM:"
+                               VerticalAlignment="Center"
+                               Margin="0,0,8,0"/>
+
+                    <TextBox Grid.Column="4"
+                             x:Name="txtGpsPort"
+                             Width="100"
+                             Text="COM6"
+                             VerticalAlignment="Center"/>
+
+                    <TextBlock Grid.Column="6"
+                               Text="Baud:"
+                               VerticalAlignment="Center"
+                               Margin="0,0,8,0"/>
+
+                    <TextBox Grid.Column="7"
+                             x:Name="txtBaudRate"
+                             Width="100"
+                             Text="9600"
+                             VerticalAlignment="Center"/>
+
+                    <Button Grid.Column="9"
+                            x:Name="btnConnect"
+                            Content="처음부터 접속"
+                            Width="120"
+                            Height="32"
+                            Margin="0,0,8,0"
+                            Click="btnConnect_Click"/>
+
+                    <Button Grid.Column="10"
+                            x:Name="btnResumeConnect"
+                            Content="이어서 접속"
+                            Width="120"
+                            Height="32"
+                            Margin="0,0,8,0"
+                            Click="btnResumeConnect_Click"/>
+
+                    <Button Grid.Column="11"
+                            x:Name="btnDisconnect"
+                            Content="연결 종료"
+                            Width="120"
+                            Height="32"
+                            Click="btnDisconnect_Click"/>
+                </Grid>
+
+                <!-- 2행 -->
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="340"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0"
+                               Text="영상 WS 주소:"
+                               VerticalAlignment="Center"
+                               Margin="0,0,8,0"/>
+
+                    <TextBox Grid.Column="1"
+                             x:Name="txtVideoServerUrl"
+                             Width="340"
+                             Text="ws://192.168.0.173:5090/ws/train-video"
+                             VerticalAlignment="Center"/>
+                </Grid>
+            </Grid>
         </Border>
 
-        <Border Grid.Row="1" Margin="0,10,0,10" Padding="10" BorderBrush="Gray" BorderThickness="1" CornerRadius="8">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="WebSocket 상태: " FontWeight="Bold"/>
+        <!-- 상태 표시 -->
+        <Border Grid.Row="1"
+                Margin="0,10,0,10"
+                Padding="10"
+                BorderBrush="Gray"
+                BorderThickness="1"
+                CornerRadius="8">
+            <WrapPanel VerticalAlignment="Center">
+                <TextBlock Text="일반 WS 상태: " FontWeight="Bold"/>
                 <TextBlock x:Name="txtWsStatus" Text="미연결" Margin="0,0,20,0"/>
+
+                <TextBlock Text="영상 WS 상태: " FontWeight="Bold"/>
+                <TextBlock x:Name="txtVideoWsStatus" Text="미연결" Margin="0,0,20,0"/>
 
                 <TextBlock Text="GPS 연결 상태: " FontWeight="Bold"/>
                 <TextBlock x:Name="txtGpsStatus" Text="미연결" Margin="0,0,20,0"/>
@@ -62,17 +145,28 @@
 
                 <TextBlock Text="현재 경도: " FontWeight="Bold"/>
                 <TextBlock x:Name="txtLng" Text="-"/>
-            </StackPanel>
+            </WrapPanel>
         </Border>
 
-        <Border Grid.Row="2" Margin="0,0,0,10" Padding="10" BorderBrush="Gray" BorderThickness="1" CornerRadius="8">
+        <!-- 마지막 제어명령 -->
+        <Border Grid.Row="2"
+                Margin="0,0,0,10"
+                Padding="10"
+                BorderBrush="Gray"
+                BorderThickness="1"
+                CornerRadius="8">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="마지막 제어명령: " FontWeight="Bold"/>
                 <TextBlock x:Name="txtLastCommand" Text="-" />
             </StackPanel>
         </Border>
 
-        <Border Grid.Row="3" Padding="10" BorderBrush="Gray" BorderThickness="1" CornerRadius="8">
+        <!-- 로그 -->
+        <Border Grid.Row="3"
+                Padding="10"
+                BorderBrush="Gray"
+                BorderThickness="1"
+                CornerRadius="8">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -80,8 +174,16 @@
                 </Grid.RowDefinitions>
 
                 <DockPanel Grid.Row="0" Margin="0,0,0,8">
-                    <TextBlock Text="로그" FontSize="18" FontWeight="Bold" DockPanel.Dock="Left"/>
-                    <Button Content="로그 지우기" Width="100" Height="28" DockPanel.Dock="Right" Click="ClearLog_Click"/>
+                    <TextBlock Text="로그"
+                               FontSize="18"
+                               FontWeight="Bold"
+                               DockPanel.Dock="Left"/>
+
+                    <Button Content="로그 지우기"
+                            Width="100"
+                            Height="28"
+                            DockPanel.Dock="Right"
+                            Click="ClearLog_Click"/>
                 </DockPanel>
 
                 <TextBox x:Name="txtLog"

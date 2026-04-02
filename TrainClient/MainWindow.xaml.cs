@@ -14,10 +14,7 @@ namespace TrainClient
         private TrainWebSocketClientService? _clientService;
         private DispatcherTimer? _uiTimer;
 
-        // 기존 단일 팝업 -> 객차번호별 다중 팝업 관리
         private readonly Dictionary<int, CameraPopup> _cameraPopups = new();
-
-        // 현재 표시 중인 인터컴 호출 번호
         private int _previousActiveIntercomCar = 0;
 
         public MainWindow()
@@ -41,13 +38,15 @@ namespace TrainClient
             if (_clientService == null)
             {
                 txtWsStatus.Text = "미연결";
+                txtVideoWsStatus.Text = "미연결";
                 txtGpsStatus.Text = "미연결";
                 txtLat.Text = "-";
                 txtLng.Text = "-";
                 return;
             }
 
-            txtWsStatus.Text = _clientService.IsConnected ? "연결됨" : "미연결";
+            txtWsStatus.Text = _clientService.IsMainConnected ? "연결됨" : "미연결";
+            txtVideoWsStatus.Text = _clientService.IsVideoConnected ? "연결됨" : "미연결";
             txtGpsStatus.Text = _clientService.IsGpsConnected ? "연결됨" : "미연결";
             txtLat.Text = _clientService.CurrentLat?.ToString("F10") ?? "-";
             txtLng.Text = _clientService.CurrentLng?.ToString("F10") ?? "-";
@@ -68,18 +67,21 @@ namespace TrainClient
             try
             {
                 string wsUrl = txtServerUrl.Text.Trim();
+                string videoWsUrl = txtVideoServerUrl.Text.Trim();
                 string gpsPort = txtGpsPort.Text.Trim();
                 int baudRate = int.Parse(txtBaudRate.Text.Trim());
 
+                // 기존 로직 유지:
+                // 서비스가 없을 때만 생성해야 진행 상태(frame/position)가 유지됨
                 if (_clientService == null)
                 {
-                    _clientService = new TrainWebSocketClientService(wsUrl, gpsPort, baudRate);
+                    _clientService = new TrainWebSocketClientService(wsUrl, videoWsUrl, gpsPort, baudRate);
                     _clientService.LogReceived += AppendLog;
                     _clientService.ControlCommandReceived += OnControlCommandReceived;
                     _clientService.TelemetryReceived += OnTelemetryReceived;
                 }
 
-                if (_clientService.IsConnected)
+                if (_clientService.IsMainConnected)
                 {
                     AppendLog("이미 관제 서버에 연결되어 있습니다.");
                     return;
@@ -109,7 +111,7 @@ namespace TrainClient
                     return;
                 }
 
-                if (!_clientService.IsConnected)
+                if (!_clientService.IsMainConnected && !_clientService.IsVideoConnected)
                 {
                     AppendLog("현재 연결되어 있지 않습니다.");
                     return;
@@ -169,16 +171,6 @@ namespace TrainClient
 
         private int GetActiveIntercomCarNo(int[] data)
         {
-            // combined:
-            // A면: 0 ~ 46
-            // B면: 47 ~ 93
-            //
-            // A면 인터컴 호출 번호: 12
-            // A면 마스터 여부:     14
-            //
-            // B면 인터컴 호출 번호: 59 (= 47 + 12)
-            // B면 마스터 여부:     61 (= 47 + 14)
-
             int aIntercomCar = GetSafeValue(data, 12);
             int aMaster = GetSafeValue(data, 14);
 
@@ -196,13 +188,9 @@ namespace TrainClient
 
         private void HandleActiveIntercomTransition(int currentCarNo)
         {
-            // 유지형 정책:
-            // 호출 없음(0)이 와도 기존 팝업 유지
-            // 새로운 호출이 왔을 때만 새 팝업 추가 오픈
             if (currentCarNo <= 0)
                 return;
 
-            // 첫 호출
             if (_previousActiveIntercomCar == 0)
             {
                 AppendLog($"인터컴 호출 감지: {currentCarNo}번 객차");
@@ -211,23 +199,18 @@ namespace TrainClient
                 return;
             }
 
-            // 이전 호출과 다르면 새 팝업 추가
             if (currentCarNo != _previousActiveIntercomCar)
             {
                 AppendLog($"인터컴 호출 추가 감지: {_previousActiveIntercomCar}번 이후 {currentCarNo}번 객차");
                 ShowNewCameraPopup(currentCarNo);
                 _previousActiveIntercomCar = currentCarNo;
-                return;
             }
-
-            // 같은 호출이면 유지
         }
 
         private void ShowNewCameraPopup(int carNo)
         {
             try
             {
-                // 이미 해당 객차 팝업이 열려 있으면 기존 팝업만 앞으로 가져옴
                 if (_cameraPopups.TryGetValue(carNo, out CameraPopup? existingPopup))
                 {
                     if (existingPopup.IsVisible)
@@ -319,10 +302,11 @@ namespace TrainClient
 
                 if (_clientService != null)
                 {
-                    await _clientService.StopAsync();
                     _clientService.LogReceived -= AppendLog;
                     _clientService.ControlCommandReceived -= OnControlCommandReceived;
                     _clientService.TelemetryReceived -= OnTelemetryReceived;
+
+                    await _clientService.StopAsync();
                     _clientService = null;
                 }
             }
