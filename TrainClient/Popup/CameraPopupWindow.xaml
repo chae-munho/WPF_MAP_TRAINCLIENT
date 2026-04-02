@@ -2,8 +2,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="인터컴 카메라 팝업"
-        Width="1100"
-        Height="680"
+        Width="820"
+        Height="530"
         WindowStartupLocation="CenterOwner"
         Background="#1E1E1E">
     <Grid Margin="12">

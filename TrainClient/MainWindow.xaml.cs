@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
@@ -13,7 +14,8 @@ namespace TrainClient
         private TrainWebSocketClientService? _clientService;
         private DispatcherTimer? _uiTimer;
 
-        private CameraPopup? _cameraPopup;
+        // 기존 단일 팝업 -> 객차번호별 다중 팝업 관리
+        private readonly Dictionary<int, CameraPopup> _cameraPopups = new();
 
         // 현재 표시 중인 인터컴 호출 번호
         private int _previousActiveIntercomCar = 0;
@@ -115,7 +117,7 @@ namespace TrainClient
 
                 await _clientService.StopAsync();
 
-                CloseCameraPopup();
+                CloseAllCameraPopups();
 
                 AppendLog("연결 종료 완료 (진행 상태 유지)");
             }
@@ -196,11 +198,11 @@ namespace TrainClient
         {
             // 유지형 정책:
             // 호출 없음(0)이 와도 기존 팝업 유지
-            // 새로운 호출이 왔을 때만 교체
+            // 새로운 호출이 왔을 때만 새 팝업 추가 오픈
             if (currentCarNo <= 0)
                 return;
 
-            // 이전 호출이 없으면 새 팝업 오픈
+            // 첫 호출
             if (_previousActiveIntercomCar == 0)
             {
                 AppendLog($"인터컴 호출 감지: {currentCarNo}번 객차");
@@ -209,10 +211,10 @@ namespace TrainClient
                 return;
             }
 
-            // 이전 호출과 다르면 기존 팝업 닫고 새 팝업 오픈
+            // 이전 호출과 다르면 새 팝업 추가
             if (currentCarNo != _previousActiveIntercomCar)
             {
-                AppendLog($"인터컴 호출 변경: {_previousActiveIntercomCar}번 -> {currentCarNo}번 객차");
+                AppendLog($"인터컴 호출 추가 감지: {_previousActiveIntercomCar}번 이후 {currentCarNo}번 객차");
                 ShowNewCameraPopup(currentCarNo);
                 _previousActiveIntercomCar = currentCarNo;
                 return;
@@ -225,7 +227,20 @@ namespace TrainClient
         {
             try
             {
-                CloseCameraPopup();
+                // 이미 해당 객차 팝업이 열려 있으면 기존 팝업만 앞으로 가져옴
+                if (_cameraPopups.TryGetValue(carNo, out CameraPopup? existingPopup))
+                {
+                    if (existingPopup.IsVisible)
+                    {
+                        existingPopup.Activate();
+                        existingPopup.Topmost = true;
+                        existingPopup.Topmost = false;
+                        existingPopup.Focus();
+                        return;
+                    }
+
+                    _cameraPopups.Remove(carNo);
+                }
 
                 var popup = new CameraPopup
                 {
@@ -234,14 +249,14 @@ namespace TrainClient
 
                 popup.Closed += (_, _) =>
                 {
-                    if (ReferenceEquals(_cameraPopup, popup))
-                        _cameraPopup = null;
+                    if (_cameraPopups.ContainsKey(carNo) && ReferenceEquals(_cameraPopups[carNo], popup))
+                        _cameraPopups.Remove(carNo);
                 };
 
-                _cameraPopup = popup;
-                _cameraPopup.ShowIntercom(carNo);
-                _cameraPopup.Show();
-                _cameraPopup.Activate();
+                _cameraPopups[carNo] = popup;
+                popup.ShowIntercom(carNo);
+                popup.Show();
+                popup.Activate();
 
                 _clientService?.StartVideoStreaming(carNo);
             }
@@ -251,15 +266,22 @@ namespace TrainClient
             }
         }
 
-        private void CloseCameraPopup()
+        private void CloseAllCameraPopups()
         {
             try
             {
-                if (_cameraPopup != null)
+                var popups = new List<CameraPopup>(_cameraPopups.Values);
+                _cameraPopups.Clear();
+
+                foreach (var popup in popups)
                 {
-                    var popup = _cameraPopup;
-                    _cameraPopup = null;
-                    popup.Close();
+                    try
+                    {
+                        popup.Close();
+                    }
+                    catch
+                    {
+                    }
                 }
             }
             catch
@@ -293,7 +315,7 @@ namespace TrainClient
         {
             try
             {
-                CloseCameraPopup();
+                CloseAllCameraPopups();
 
                 if (_clientService != null)
                 {
