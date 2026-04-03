@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.WebSockets;
 using System.Text;
@@ -32,9 +33,8 @@ namespace TrainClient.Services
 
         private const bool ForceOutputZero = true;
 
-        private int _videoFrameSending = 0;
-
-        private readonly VideoStreamingService _videoStreamingService = new();
+        private readonly object _videoStreamsLock = new();
+        private readonly Dictionary<int, VideoStreamingService> _videoStreams = new();
 
         public bool IsGpsConnected => _gpsService.IsConnected;
         public double? CurrentLat => _gpsService.CurrentLat;
@@ -61,9 +61,6 @@ namespace TrainClient.Services
             _videoServerUri = new Uri(videoServerUrl);
             _gpsService = new GpsService(gpsPort, gpsBaudRate);
             _gpsService.LogReceived += msg => LogReceived?.Invoke(msg);
-
-            _videoStreamingService.LogReceived += msg => LogReceived?.Invoke(msg);
-            _videoStreamingService.FrameReady += OnVideoFrameReady;
 
             TrainDataRepository.Validate();
         }
@@ -103,7 +100,7 @@ namespace TrainClient.Services
         {
             try
             {
-                StopVideoStreaming();
+                StopAllVideoStreaming();
 
                 _cts?.Cancel();
 
@@ -178,14 +175,37 @@ namespace TrainClient.Services
                     return;
                 }
 
-                if (_videoStreamingService.IsStreaming &&
-                    _videoStreamingService.CurrentTrain == _trainId &&
-                    _videoStreamingService.CurrentCarNo == carNo)
+                lock (_videoStreamsLock)
                 {
-                    return;
+                    if (_videoStreams.TryGetValue(carNo, out var existingStream))
+                    {
+                        if (existingStream.IsStreaming)
+                        {
+                            LogReceived?.Invoke($"영상 스트리밍 이미 실행 중: train={_trainId}, car={carNo}");
+                            return;
+                        }
+
+                        try
+                        {
+                            existingStream.FrameReady -= OnVideoFrameReady;
+                            existingStream.LogReceived -= OnVideoStreamLogReceived;
+                            existingStream.Dispose();
+                        }
+                        catch
+                        {
+                        }
+
+                        _videoStreams.Remove(carNo);
+                    }
+
+                    var stream = new VideoStreamingService();
+                    stream.LogReceived += OnVideoStreamLogReceived;
+                    stream.FrameReady += OnVideoFrameReady;
+
+                    _videoStreams[carNo] = stream;
+                    stream.Start(_trainId, carNo, rtspUrl);
                 }
 
-                _videoStreamingService.Start(_trainId, carNo, rtspUrl);
                 LogReceived?.Invoke($"영상 스트리밍 요청: train={_trainId}, car={carNo}");
             }
             catch (Exception ex)
@@ -194,22 +214,75 @@ namespace TrainClient.Services
             }
         }
 
-        public void StopVideoStreaming()
+        public void StopVideoStreaming(int carNo)
         {
-            int stoppedTrain = _videoStreamingService.CurrentTrain;
+            VideoStreamingService? stream = null;
 
-            _videoStreamingService.Stop();
+            lock (_videoStreamsLock)
+            {
+                if (_videoStreams.TryGetValue(carNo, out stream))
+                {
+                    _videoStreams.Remove(carNo);
+                }
+            }
 
-            _ = SafeSendVideoStopAsync(stoppedTrain <= 0 ? _trainId : stoppedTrain);
+            if (stream == null)
+                return;
+
+            try
+            {
+                stream.FrameReady -= OnVideoFrameReady;
+                stream.LogReceived -= OnVideoStreamLogReceived;
+                stream.Stop();
+                stream.Dispose();
+            }
+            catch
+            {
+            }
+
+            _ = SafeSendVideoStopAsync(_trainId, carNo);
         }
 
-        private async Task SafeSendVideoStopAsync(int trainNo)
+        public void StopAllVideoStreaming()
+        {
+            List<KeyValuePair<int, VideoStreamingService>> streams;
+
+            lock (_videoStreamsLock)
+            {
+                streams = new List<KeyValuePair<int, VideoStreamingService>>(_videoStreams);
+                _videoStreams.Clear();
+            }
+
+            foreach (var pair in streams)
+            {
+                try
+                {
+                    pair.Value.FrameReady -= OnVideoFrameReady;
+                    pair.Value.LogReceived -= OnVideoStreamLogReceived;
+                    pair.Value.Stop();
+                    pair.Value.Dispose();
+                }
+                catch
+                {
+                }
+
+                _ = SafeSendVideoStopAsync(_trainId, pair.Key);
+            }
+        }
+
+        private void OnVideoStreamLogReceived(string msg)
+        {
+            LogReceived?.Invoke(msg);
+        }
+
+        private async Task SafeSendVideoStopAsync(int trainNo, int carNo)
         {
             try
             {
                 await SendVideoAsync(new WsVideoStopMessage
                 {
                     Train = trainNo,
+                    CarNo = carNo,
                     Timestamp = DateTime.UtcNow.ToString("O")
                 }, CancellationToken.None);
             }
@@ -220,25 +293,20 @@ namespace TrainClient.Services
 
         private void OnVideoFrameReady(WsVideoFrameMessage frame)
         {
+            LogReceived?.Invoke($"[FRAME-READY] train={frame.Train}, car={frame.CarNo}");
             _ = SafeSendVideoFrameAsync(frame);
         }
 
         private async Task SafeSendVideoFrameAsync(WsVideoFrameMessage frame)
         {
-            if (Interlocked.Exchange(ref _videoFrameSending, 1) == 1)
-                return;
-
             try
             {
+                LogReceived?.Invoke($"[FRAME-SEND] train={frame.Train}, car={frame.CarNo}");
                 await SendVideoAsync(frame, CancellationToken.None);
             }
             catch (Exception ex)
             {
-                LogReceived?.Invoke($"video_frame 전송 실패: {ex.Message}");
-            }
-            finally
-            {
-                Volatile.Write(ref _videoFrameSending, 0);
+                LogReceived?.Invoke($"video_frame 전송 실패: train={frame.Train}, car={frame.CarNo}, {ex.Message}");
             }
         }
 

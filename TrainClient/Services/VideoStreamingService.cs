@@ -43,7 +43,7 @@ namespace TrainClient.Services
             try
             {
                 _cts?.Cancel();
-                _streamTask?.Wait(500);
+                _streamTask?.Wait(1000);
             }
             catch
             {
@@ -62,14 +62,16 @@ namespace TrainClient.Services
         private void StreamLoop(int trainNo, int carNo, string rtspUrl, CancellationToken token)
         {
             System.Diagnostics.Debug.WriteLine($"[VIDEO] StreamLoop begin train={trainNo}, car={carNo}");
+
             try
             {
-                using var capture = new VideoCapture(rtspUrl);
+                using var capture = new VideoCapture(rtspUrl, VideoCaptureAPIs.FFMPEG);
 
                 if (!capture.IsOpened())
                 {
                     System.Diagnostics.Debug.WriteLine($"[VIDEO] RTSP open failed: {rtspUrl}");
-                    LogReceived?.Invoke($"RTSP 연결 실패: {rtspUrl}");
+                    
+                    LogReceived?.Invoke($"RTSP 연결 실패: train={trainNo}, car={carNo}, url={rtspUrl}");
                     return;
                 }
 
@@ -77,18 +79,25 @@ namespace TrainClient.Services
                 LogReceived?.Invoke($"영상 스트리밍 시작: train={trainNo}, car={carNo}");
 
                 using var frame = new Mat();
+                using var resized = new Mat();
 
                 while (!token.IsCancellationRequested)
                 {
                     if (!capture.Read(frame) || frame.Empty())
                     {
-                        Thread.Sleep(50);
+                        LogReceived?.Invoke($"프레임 읽기 실패: train={trainNo}, car={carNo}");
+                        Thread.Sleep(30);
                         continue;
                     }
 
-                    Cv2.Resize(frame, frame, new OpenCvSharp.Size(400, 225));
+                    Cv2.Resize(frame, resized, new OpenCvSharp.Size(400, 225));
 
-                    byte[] jpegBytes = frame.ToBytes(".jpg");
+                    int[] jpegParams =
+                    {
+                        (int)ImwriteFlags.JpegQuality, 60
+                    };
+
+                    byte[] jpegBytes = resized.ToBytes(".jpg", jpegParams);
                     string base64 = Convert.ToBase64String(jpegBytes);
 
                     FrameReady?.Invoke(new WsVideoFrameMessage
@@ -96,13 +105,13 @@ namespace TrainClient.Services
                         Train = trainNo,
                         CarNo = carNo,
                         ImageBase64 = base64,
-                        Width = frame.Width,
-                        Height = frame.Height,
+                        Width = resized.Width,
+                        Height = resized.Height,
                         Format = "jpeg",
                         Timestamp = DateTime.UtcNow.ToString("O")
                     });
 
-                    Thread.Sleep(300);
+                    Thread.Sleep(100);
                 }
             }
             catch (Exception ex)
@@ -112,7 +121,7 @@ namespace TrainClient.Services
             finally
             {
                 IsStreaming = false;
-                LogReceived?.Invoke("영상 스트리밍 종료");
+                LogReceived?.Invoke($"영상 스트리밍 종료: train={trainNo}, car={carNo}");
             }
         }
 
