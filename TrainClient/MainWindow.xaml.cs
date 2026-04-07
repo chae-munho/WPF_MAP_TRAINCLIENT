@@ -233,7 +233,11 @@ namespace TrainClient
                 popup.Closed += (_, _) =>
                 {
                     if (_cameraPopups.ContainsKey(carNo) && ReferenceEquals(_cameraPopups[carNo], popup))
+                    {
                         _cameraPopups.Remove(carNo);
+                        _clientService?.StopVideoStreaming(carNo);
+                        AppendLog($"[POPUP-CLOSED] car={carNo}");
+                    }                 
                 };
 
                 _cameraPopups[carNo] = popup;
