@@ -189,7 +189,13 @@ namespace TrainClient
         private void HandleActiveIntercomTransition(int currentCarNo)
         {
             if (currentCarNo <= 0)
+            {
+                _previousActiveIntercomCar = 0;
                 return;
+            }
+
+            bool popupAlreadyOpen = _cameraPopups.TryGetValue(currentCarNo, out CameraPopup? existingPopup)
+                                    && existingPopup.IsVisible;
 
             if (_previousActiveIntercomCar == 0)
             {
@@ -204,6 +210,13 @@ namespace TrainClient
                 AppendLog($"인터컴 호출 추가 감지: {_previousActiveIntercomCar}번 이후 {currentCarNo}번 객차");
                 ShowNewCameraPopup(currentCarNo);
                 _previousActiveIntercomCar = currentCarNo;
+                return;
+            }
+
+            if (!popupAlreadyOpen)
+            {
+                AppendLog($"인터컴 재호출 감지: {currentCarNo}번 객차");
+                ShowNewCameraPopup(currentCarNo);
             }
         }
 
