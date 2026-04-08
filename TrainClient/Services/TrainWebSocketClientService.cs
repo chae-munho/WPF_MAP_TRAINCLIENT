@@ -411,10 +411,16 @@ namespace TrainClient.Services
                         Timestamp = DateTime.UtcNow.ToString("O")
                     }, token);
 
-                    while (!token.IsCancellationRequested && videoSocket.State == WebSocketState.Open)
-                    {
-                        await Task.Delay(1000, token);
-                    }
+                    using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(token);
+                    CancellationToken linkedToken = linkedCts.Token;
+
+                    Task receiveTask = ReceiveVideoLoopAsync(videoSocket, linkedToken);
+
+                    _ = await Task.WhenAny(receiveTask);
+
+                    linkedCts.Cancel();
+
+                    await SafeAwait(receiveTask);
                 }
                 catch (OperationCanceledException)
                 {
@@ -456,6 +462,63 @@ namespace TrainClient.Services
                     }
                 }
             }
+        }
+        private async Task ReceiveVideoLoopAsync(ClientWebSocket socket, CancellationToken token)
+        {
+            byte[] buffer = new byte[8192];
+
+            while (!token.IsCancellationRequested && socket.State == WebSocketState.Open)
+            {
+                string json = await ReceiveTextMessageAsync(socket, buffer, token);
+                if (string.IsNullOrWhiteSpace(json))
+                    continue;
+
+                LogReceived?.Invoke($"[VIDEO-RECV] {json}");
+
+                await ProcessVideoMessageAsync(json, token);
+            }
+        }
+        private Task ProcessVideoMessageAsync(string json, CancellationToken token)
+        {
+            try
+            {
+                using JsonDocument doc = JsonDocument.Parse(json);
+
+                string type = "";
+                if (doc.RootElement.TryGetProperty("type", out JsonElement typeEl) ||
+                    doc.RootElement.TryGetProperty("Type", out typeEl))
+                {
+                    type = typeEl.GetString() ?? "";
+                }
+
+                if (type == "video_control")
+                {
+                    WsVideoControlMessage? msg = JsonSerializer.Deserialize<WsVideoControlMessage>(json);
+
+                    if (msg != null &&
+                        msg.Train == _trainId &&
+                        msg.CarNo > 0 &&
+                        string.Equals(msg.Action, "stop", StringComparison.OrdinalIgnoreCase))
+                    {
+                        LogReceived?.Invoke($"[VIDEO-CONTROL] stop 요청 수신 train={msg.Train}, car={msg.CarNo}");
+                        StopVideoStreaming(msg.CarNo);
+                    }
+                }
+                else if (type == "ping")
+                {
+                    _ = SendVideoAsync(new
+                    {
+                        type = "pong",
+                        timestamp = DateTime.UtcNow.ToString("O")
+                    }, token);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogReceived?.Invoke($"영상 메시지 처리 실패: {ex.Message}");
+            }
+
+            return Task.CompletedTask;
         }
 
         private async Task ReceiveLoopAsync(ClientWebSocket socket, CancellationToken token)
