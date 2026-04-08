@@ -800,6 +800,13 @@ namespace TrainClient.Services
 
             return frame;
         }
+        public bool IsVideoStreamingActive(int carNo)
+        {
+            lock (_videoStreamsLock)
+            {
+                return _videoStreams.TryGetValue(carNo, out var stream) && stream.IsStreaming;
+            }
+        }
 
         private static async Task SafeAwait(Task task)
         {

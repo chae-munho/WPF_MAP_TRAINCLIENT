@@ -232,6 +232,13 @@ namespace TrainClient
                         existingPopup.Topmost = true;
                         existingPopup.Topmost = false;
                         existingPopup.Focus();
+
+                        if (_clientService != null && !_clientService.IsVideoStreamingActive(carNo))
+                        {
+                            AppendLog($"[VIDEO-RESTART] car={carNo}");
+                            _clientService.StartVideoStreaming(carNo);
+                        }
+
                         return;
                     }
 
