@@ -293,7 +293,7 @@ namespace TrainClient.Services
 
         private void OnVideoFrameReady(WsVideoFrameMessage frame)
         {
-            LogReceived?.Invoke($"[FRAME-READY] train={frame.Train}, car={frame.CarNo}");
+            //LogReceived?.Invoke($"[FRAME-READY] train={frame.Train}, car={frame.CarNo}");
             _ = SafeSendVideoFrameAsync(frame);
         }
 
@@ -301,12 +301,12 @@ namespace TrainClient.Services
         {
             try
             {
-                LogReceived?.Invoke($"[FRAME-SEND] train={frame.Train}, car={frame.CarNo}");
+                //LogReceived?.Invoke($"[FRAME-SEND] train={frame.Train}, car={frame.CarNo}");
                 await SendVideoAsync(frame, CancellationToken.None);
             }
             catch (Exception ex)
             {
-                LogReceived?.Invoke($"video_frame 전송 실패: train={frame.Train}, car={frame.CarNo}, {ex.Message}");
+                //LogReceived?.Invoke($"video_frame 전송 실패: train={frame.Train}, car={frame.CarNo}, {ex.Message}");
             }
         }
 
@@ -473,7 +473,7 @@ namespace TrainClient.Services
                 if (string.IsNullOrWhiteSpace(json))
                     continue;
 
-                LogReceived?.Invoke($"[VIDEO-RECV] {json}");
+                //LogReceived?.Invoke($"[VIDEO-RECV] {json}");
 
                 await ProcessVideoMessageAsync(json, token);
             }
