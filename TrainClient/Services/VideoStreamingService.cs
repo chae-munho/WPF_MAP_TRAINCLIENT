@@ -16,7 +16,7 @@ namespace TrainClient.Services
         public int CurrentCarNo { get; private set; }
 
         public event Action<string>? LogReceived;
-        public event Action<WsVideoFrameMessage>? FrameReady;
+        public event Action<VideoFramePacket>? FrameReady;
 
         public void Start(int trainNo, int carNo, string rtspUrl)
         {
@@ -98,17 +98,15 @@ namespace TrainClient.Services
                     };
 
                     byte[] jpegBytes = resized.ToBytes(".jpg", jpegParams);
-                    string base64 = Convert.ToBase64String(jpegBytes);
 
-                    FrameReady?.Invoke(new WsVideoFrameMessage
+                    FrameReady?.Invoke(new VideoFramePacket
                     {
                         Train = trainNo,
                         CarNo = carNo,
-                        ImageBase64 = base64,
                         Width = resized.Width,
                         Height = resized.Height,
-                        Format = "jpeg",
-                        Timestamp = DateTime.UtcNow.ToString("O")
+                        TimestampTicksUtc = DateTime.UtcNow.Ticks,
+                        JpegBytes = jpegBytes
                     });
 
                     Thread.Sleep(100);

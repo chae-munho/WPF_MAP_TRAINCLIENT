@@ -279,7 +279,7 @@ namespace TrainClient.Services
         {
             try
             {
-                await SendVideoAsync(new WsVideoStopMessage
+                await SendVideoTextAsync(new WsVideoStopMessage
                 {
                     Train = trainNo,
                     CarNo = carNo,
@@ -291,22 +291,19 @@ namespace TrainClient.Services
             }
         }
 
-        private void OnVideoFrameReady(WsVideoFrameMessage frame)
+        private void OnVideoFrameReady(VideoFramePacket frame)
         {
-            //LogReceived?.Invoke($"[FRAME-READY] train={frame.Train}, car={frame.CarNo}");
             _ = SafeSendVideoFrameAsync(frame);
         }
 
-        private async Task SafeSendVideoFrameAsync(WsVideoFrameMessage frame)
+        private async Task SafeSendVideoFrameAsync(VideoFramePacket frame)
         {
             try
             {
-                //LogReceived?.Invoke($"[FRAME-SEND] train={frame.Train}, car={frame.CarNo}");
-                await SendVideoAsync(frame, CancellationToken.None);
+                await SendVideoFrameBinaryAsync(frame, CancellationToken.None);
             }
-            catch (Exception ex)
+            catch
             {
-                //LogReceived?.Invoke($"video_frame 전송 실패: train={frame.Train}, car={frame.CarNo}, {ex.Message}");
             }
         }
 
@@ -404,7 +401,7 @@ namespace TrainClient.Services
                     await videoSocket.ConnectAsync(_videoServerUri, token);
                     LogReceived?.Invoke("관제 서버(영상) WebSocket 연결 성공");
 
-                    await SendVideoAsync(new WsHelloMessage
+                    await SendVideoTextAsync(new WsHelloMessage
                     {
                         Train = _trainId,
                         ClientName = Environment.MachineName,
@@ -463,6 +460,7 @@ namespace TrainClient.Services
                 }
             }
         }
+
         private async Task ReceiveVideoLoopAsync(ClientWebSocket socket, CancellationToken token)
         {
             byte[] buffer = new byte[8192];
@@ -473,11 +471,10 @@ namespace TrainClient.Services
                 if (string.IsNullOrWhiteSpace(json))
                     continue;
 
-                //LogReceived?.Invoke($"[VIDEO-RECV] {json}");
-
                 await ProcessVideoMessageAsync(json, token);
             }
         }
+
         private Task ProcessVideoMessageAsync(string json, CancellationToken token)
         {
             try
@@ -506,7 +503,7 @@ namespace TrainClient.Services
                 }
                 else if (type == "ping")
                 {
-                    _ = SendVideoAsync(new
+                    _ = SendVideoTextAsync(new
                     {
                         type = "pong",
                         timestamp = DateTime.UtcNow.ToString("O")
@@ -688,7 +685,7 @@ namespace TrainClient.Services
             }
         }
 
-        private async Task SendVideoAsync<T>(T payload, CancellationToken token)
+        private async Task SendVideoTextAsync<T>(T payload, CancellationToken token)
         {
             if (_videoSocket == null || _videoSocket.State != WebSocketState.Open)
                 return;
@@ -704,6 +701,46 @@ namespace TrainClient.Services
                     await _videoSocket.SendAsync(
                         new ArraySegment<byte>(bytes),
                         WebSocketMessageType.Text,
+                        true,
+                        token);
+                }
+            }
+            finally
+            {
+                _videoSendLock.Release();
+            }
+        }
+
+        private async Task SendVideoFrameBinaryAsync(VideoFramePacket frame, CancellationToken token)
+        {
+            if (_videoSocket == null || _videoSocket.State != WebSocketState.Open)
+                return;
+
+            byte[] jpegBytes = frame.JpegBytes ?? Array.Empty<byte>();
+
+            using var ms = new MemoryStream();
+            using (var bw = new BinaryWriter(ms, Encoding.UTF8, true))
+            {
+                bw.Write(frame.Train);
+                bw.Write(frame.CarNo);
+                bw.Write(frame.Width);
+                bw.Write(frame.Height);
+                bw.Write(frame.TimestampTicksUtc);
+                bw.Write(jpegBytes.Length);
+                bw.Write(jpegBytes);
+                bw.Flush();
+            }
+
+            byte[] packet = ms.ToArray();
+
+            await _videoSendLock.WaitAsync(token);
+            try
+            {
+                if (_videoSocket != null && _videoSocket.State == WebSocketState.Open)
+                {
+                    await _videoSocket.SendAsync(
+                        new ArraySegment<byte>(packet),
+                        WebSocketMessageType.Binary,
                         true,
                         token);
                 }
@@ -800,6 +837,7 @@ namespace TrainClient.Services
 
             return frame;
         }
+
         public bool IsVideoStreamingActive(int carNo)
         {
             lock (_videoStreamsLock)
