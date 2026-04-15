@@ -11,6 +11,14 @@
       "RelativeMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|solutionrelative:trainclient\\services\\videostreamingservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|c:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\wpf_map_trainclient\\trainclient\\popup\\camerapopupwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|solutionrelative:trainclient\\popup\\camerapopupwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|c:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\wpf_map_trainclient\\trainclient\\models\\videoframepacket.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|solutionrelative:trainclient\\models\\videoframepacket.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|c:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\wpf_map_trainclient\\trainclient\\services\\trainwebsocketclientservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|solutionrelative:trainclient\\services\\trainwebsocketclientservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -33,14 +41,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|c:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\wpf_map_trainclient\\trainclient\\models\\wsvideocontrolmessage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|solutionrelative:trainclient\\models\\wsvideocontrolmessage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|c:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\wpf_map_trainclient\\trainclient\\models\\videoframepacket.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|solutionrelative:trainclient\\models\\videoframepacket.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|c:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\wpf_map_trainclient\\trainclient\\popup\\camerapopupwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|solutionrelative:trainclient\\popup\\camerapopupwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D4C33050-5292-D7E7-AF56-39E84BEEB22B}|TrainClient\\TrainClient.csproj|c:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\wpf_map_trainclient\\trainclient\\models\\wstelemetrymessage.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -86,47 +86,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 5,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "CameraRouteService.cs",
-              "DocumentMoniker": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Services\\CameraRouteService.cs",
-              "RelativeDocumentMoniker": "TrainClient\\Services\\CameraRouteService.cs",
-              "ToolTip": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Services\\CameraRouteService.cs",
-              "RelativeToolTip": "TrainClient\\Services\\CameraRouteService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAAA4AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-30T08:15:27.588Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "TrainDataRepository.cs",
-              "DocumentMoniker": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Data\\TrainDataRepository.cs",
-              "RelativeDocumentMoniker": "TrainClient\\Data\\TrainDataRepository.cs",
-              "ToolTip": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Data\\TrainDataRepository.cs",
-              "RelativeToolTip": "TrainClient\\Data\\TrainDataRepository.cs",
-              "ViewState": "AgIAAJAAAAAAAAAAAAAgwKAAAAA2AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-18T08:38:33.626Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "TrainWebSocketClientService.cs",
-              "DocumentMoniker": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Services\\TrainWebSocketClientService.cs",
-              "RelativeDocumentMoniker": "TrainClient\\Services\\TrainWebSocketClientService.cs",
-              "ToolTip": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Services\\TrainWebSocketClientService.cs",
-              "RelativeToolTip": "TrainClient\\Services\\TrainWebSocketClientService.cs",
-              "ViewState": "AgIAAEADAAAAAAAAAAAAAEkDAAAJAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-20T05:48:14.175Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Document",
               "DocumentIndex": 1,
@@ -135,66 +96,26 @@
               "RelativeDocumentMoniker": "TrainClient\\Services\\VideoStreamingService.cs",
               "ToolTip": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Services\\VideoStreamingService.cs",
               "RelativeToolTip": "TrainClient\\Services\\VideoStreamingService.cs",
-              "ViewState": "AgIAAKIAAAAAAAAAAAAYwK0AAAAVAAAAAAAAAA==",
+              "ViewState": "AgIAAHQAAAAAAAAAAAAmwIkAAABXAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-03-30T08:20:37.058Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "CameraPopupWindow.xaml",
+              "DocumentMoniker": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Popup\\CameraPopupWindow.xaml",
+              "RelativeDocumentMoniker": "TrainClient\\Popup\\CameraPopupWindow.xaml",
+              "ToolTip": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Popup\\CameraPopupWindow.xaml",
+              "RelativeToolTip": "TrainClient\\Popup\\CameraPopupWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-03-30T04:01:54.127Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 3,
-              "Title": "MainWindow.xaml.cs",
-              "DocumentMoniker": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\MainWindow.xaml.cs",
-              "RelativeDocumentMoniker": "TrainClient\\MainWindow.xaml.cs",
-              "ToolTip": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\MainWindow.xaml.cs",
-              "RelativeToolTip": "TrainClient\\MainWindow.xaml.cs",
-              "ViewState": "AgIAADEBAAAAAAAAAAAIwE4BAAARAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-18T04:09:10.498Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "CameraPopupWindow.xaml.cs",
-              "DocumentMoniker": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Popup\\CameraPopupWindow.xaml.cs",
-              "RelativeDocumentMoniker": "TrainClient\\Popup\\CameraPopupWindow.xaml.cs",
-              "ToolTip": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Popup\\CameraPopupWindow.xaml.cs",
-              "RelativeToolTip": "TrainClient\\Popup\\CameraPopupWindow.xaml.cs",
-              "ViewState": "AgIAAF4AAAAAAAAAAAAUwHgAAAAjAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-30T04:12:34.716Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "WsVideoStopMessage.cs",
-              "DocumentMoniker": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Models\\WsVideoStopMessage.cs",
-              "RelativeDocumentMoniker": "TrainClient\\Models\\WsVideoStopMessage.cs",
-              "ToolTip": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Models\\WsVideoStopMessage.cs",
-              "RelativeToolTip": "TrainClient\\Models\\WsVideoStopMessage.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-30T08:13:49.35Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "WsVideoControlMessage.cs",
-              "DocumentMoniker": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Models\\WsVideoControlMessage.cs",
-              "RelativeDocumentMoniker": "TrainClient\\Models\\WsVideoControlMessage.cs",
-              "ToolTip": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Models\\WsVideoControlMessage.cs",
-              "RelativeToolTip": "TrainClient\\Models\\WsVideoControlMessage.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-08T04:11:04.607Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
               "Title": "VideoFramePacket.cs",
               "DocumentMoniker": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Models\\VideoFramePacket.cs",
               "RelativeDocumentMoniker": "TrainClient\\Models\\VideoFramePacket.cs",
@@ -207,14 +128,88 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "TrainWebSocketClientService.cs",
+              "DocumentMoniker": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Services\\TrainWebSocketClientService.cs",
+              "RelativeDocumentMoniker": "TrainClient\\Services\\TrainWebSocketClientService.cs",
+              "ToolTip": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Services\\TrainWebSocketClientService.cs",
+              "RelativeToolTip": "TrainClient\\Services\\TrainWebSocketClientService.cs",
+              "ViewState": "AgIAAEADAAAAAAAAAAAAAEkDAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-20T05:48:14.175Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "MainWindow.xaml.cs",
+              "DocumentMoniker": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\MainWindow.xaml.cs",
+              "RelativeDocumentMoniker": "TrainClient\\MainWindow.xaml.cs",
+              "ToolTip": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\MainWindow.xaml.cs",
+              "RelativeToolTip": "TrainClient\\MainWindow.xaml.cs",
+              "ViewState": "AgIAADEBAAAAAAAAAAAIwE4BAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-18T04:09:10.498Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "TrainDataRepository.cs",
+              "DocumentMoniker": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Data\\TrainDataRepository.cs",
+              "RelativeDocumentMoniker": "TrainClient\\Data\\TrainDataRepository.cs",
+              "ToolTip": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Data\\TrainDataRepository.cs",
+              "RelativeToolTip": "TrainClient\\Data\\TrainDataRepository.cs",
+              "ViewState": "AgIAAIYAAAAAAAAAAAAAAI8AAACfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-18T08:38:33.626Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "CameraPopupWindow.xaml.cs",
+              "DocumentMoniker": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Popup\\CameraPopupWindow.xaml.cs",
+              "RelativeDocumentMoniker": "TrainClient\\Popup\\CameraPopupWindow.xaml.cs",
+              "ToolTip": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Popup\\CameraPopupWindow.xaml.cs",
+              "RelativeToolTip": "TrainClient\\Popup\\CameraPopupWindow.xaml.cs",
+              "ViewState": "AgIAAF4AAAAAAAAAAAAUwHgAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-30T04:12:34.716Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "CameraRouteService.cs",
+              "DocumentMoniker": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Services\\CameraRouteService.cs",
+              "RelativeDocumentMoniker": "TrainClient\\Services\\CameraRouteService.cs",
+              "ToolTip": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Services\\CameraRouteService.cs",
+              "RelativeToolTip": "TrainClient\\Services\\CameraRouteService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAAA4AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-30T08:15:27.588Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "WsVideoStopMessage.cs",
+              "DocumentMoniker": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Models\\WsVideoStopMessage.cs",
+              "RelativeDocumentMoniker": "TrainClient\\Models\\WsVideoStopMessage.cs",
+              "ToolTip": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Models\\WsVideoStopMessage.cs",
+              "RelativeToolTip": "TrainClient\\Models\\WsVideoStopMessage.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-30T08:13:49.35Z"
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 9,
-              "Title": "CameraPopupWindow.xaml",
-              "DocumentMoniker": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Popup\\CameraPopupWindow.xaml",
-              "RelativeDocumentMoniker": "TrainClient\\Popup\\CameraPopupWindow.xaml",
-              "ToolTip": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Popup\\CameraPopupWindow.xaml",
-              "RelativeToolTip": "TrainClient\\Popup\\CameraPopupWindow.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-03-30T04:01:54.127Z"
+              "Title": "WsVideoControlMessage.cs",
+              "DocumentMoniker": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Models\\WsVideoControlMessage.cs",
+              "RelativeDocumentMoniker": "TrainClient\\Models\\WsVideoControlMessage.cs",
+              "ToolTip": "C:\\ean\\\uBB38\uACBD\uBAA8\uB178\uB808\uC77C\\WPF_MAP_TRAINCLIENT\\TrainClient\\Models\\WsVideoControlMessage.cs",
+              "RelativeToolTip": "TrainClient\\Models\\WsVideoControlMessage.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-08T04:11:04.607Z"
             },
             {
               "$type": "Document",

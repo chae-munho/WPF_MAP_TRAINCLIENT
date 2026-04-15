@@ -135,11 +135,11 @@ namespace TrainClient.Services
 
                             consecutiveFailCount = 0;
 
-                            Cv2.Resize(frame, resized, new OpenCvSharp.Size(400, 225));
+                            Cv2.Resize(frame, resized, new OpenCvSharp.Size(960, 540));
 
                             int[] jpegParams =
                             {
-                                (int)ImwriteFlags.JpegQuality, 60
+                                (int)ImwriteFlags.JpegQuality, 85
                             };
 
                             byte[] jpegBytes = resized.ToBytes(".jpg", jpegParams);
