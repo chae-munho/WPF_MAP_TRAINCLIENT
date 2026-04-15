@@ -43,7 +43,7 @@ namespace TrainClient.Services
             try
             {
                 _cts?.Cancel();
-                _streamTask?.Wait(1000);
+                _streamTask?.Wait(1500);
             }
             catch
             {
@@ -63,57 +63,130 @@ namespace TrainClient.Services
         {
             System.Diagnostics.Debug.WriteLine($"[VIDEO] StreamLoop begin train={trainNo}, car={carNo}");
 
+            const int maxConsecutiveReadFails = 10;
+            const int readFailDelayMs = 100;
+            const int reconnectDelayMs = 1000;
+            const int frameIntervalMs = 100;
+
+            bool wasStreamingLogged = false;
+
             try
             {
-                using var capture = new VideoCapture(rtspUrl, VideoCaptureAPIs.FFMPEG);
-
-                if (!capture.IsOpened())
-                {
-                    System.Diagnostics.Debug.WriteLine($"[VIDEO] RTSP open failed: {rtspUrl}");
-                    
-                    LogReceived?.Invoke($"RTSP 연결 실패: train={trainNo}, car={carNo}, url={rtspUrl}");
-                    return;
-                }
-
-                IsStreaming = true;
-                LogReceived?.Invoke($"영상 스트리밍 시작: train={trainNo}, car={carNo}");
-
-                using var frame = new Mat();
-                using var resized = new Mat();
-
                 while (!token.IsCancellationRequested)
                 {
-                    if (!capture.Read(frame) || frame.Empty())
+                    try
                     {
-                        LogReceived?.Invoke($"프레임 읽기 실패: train={trainNo}, car={carNo}");
-                        Thread.Sleep(30);
-                        continue;
+                        using var capture = new VideoCapture(rtspUrl, VideoCaptureAPIs.FFMPEG);
+
+                        if (!capture.IsOpened())
+                        {
+                            IsStreaming = false;
+
+                            LogReceived?.Invoke($"RTSP 연결 실패: train={trainNo}, car={carNo}, url={rtspUrl}");
+
+                            if (token.IsCancellationRequested)
+                                break;
+
+                            Thread.Sleep(reconnectDelayMs);
+                            continue;
+                        }
+
+                        if (!wasStreamingLogged)
+                        {
+                            LogReceived?.Invoke($"영상 스트리밍 시작: train={trainNo}, car={carNo}");
+                            wasStreamingLogged = true;
+                        }
+                        else
+                        {
+                            LogReceived?.Invoke($"영상 스트리밍 재연결 성공: train={trainNo}, car={carNo}");
+                        }
+
+                        IsStreaming = true;
+
+                        using var frame = new Mat();
+                        using var resized = new Mat();
+
+                        int consecutiveFailCount = 0;
+
+                        while (!token.IsCancellationRequested)
+                        {
+                            bool ok = capture.Read(frame);
+
+                            if (!ok || frame.Empty())
+                            {
+                                consecutiveFailCount++;
+
+                                if (consecutiveFailCount == 1 || consecutiveFailCount % 5 == 0)
+                                {
+                                    LogReceived?.Invoke(
+                                        $"프레임 읽기 실패: train={trainNo}, car={carNo}, fail={consecutiveFailCount}");
+                                }
+
+                                if (consecutiveFailCount >= maxConsecutiveReadFails)
+                                {
+                                    LogReceived?.Invoke(
+                                        $"프레임 연속 실패로 재연결 시도: train={trainNo}, car={carNo}, fail={consecutiveFailCount}");
+                                    break;
+                                }
+
+                                Thread.Sleep(readFailDelayMs);
+                                continue;
+                            }
+
+                            consecutiveFailCount = 0;
+
+                            Cv2.Resize(frame, resized, new OpenCvSharp.Size(400, 225));
+
+                            int[] jpegParams =
+                            {
+                                (int)ImwriteFlags.JpegQuality, 60
+                            };
+
+                            byte[] jpegBytes = resized.ToBytes(".jpg", jpegParams);
+
+                            FrameReady?.Invoke(new VideoFramePacket
+                            {
+                                Train = trainNo,
+                                CarNo = carNo,
+                                Width = resized.Width,
+                                Height = resized.Height,
+                                TimestampTicksUtc = DateTime.UtcNow.Ticks,
+                                JpegBytes = jpegBytes
+                            });
+
+                            Thread.Sleep(frameIntervalMs);
+                        }
+
+                        IsStreaming = false;
+
+                        try
+                        {
+                            capture.Release();
+                        }
+                        catch
+                        {
+                        }
+
+                        if (token.IsCancellationRequested)
+                            break;
+
+                        Thread.Sleep(reconnectDelayMs);
                     }
-
-                    Cv2.Resize(frame, resized, new OpenCvSharp.Size(400, 225));
-
-                    int[] jpegParams =
+                    catch (Exception ex)
                     {
-                        (int)ImwriteFlags.JpegQuality, 60
-                    };
+                        IsStreaming = false;
+                        LogReceived?.Invoke($"영상 스트리밍 루프 오류: train={trainNo}, car={carNo}, error={ex.Message}");
 
-                    byte[] jpegBytes = resized.ToBytes(".jpg", jpegParams);
+                        if (token.IsCancellationRequested)
+                            break;
 
-                    FrameReady?.Invoke(new VideoFramePacket
-                    {
-                        Train = trainNo,
-                        CarNo = carNo,
-                        Width = resized.Width,
-                        Height = resized.Height,
-                        TimestampTicksUtc = DateTime.UtcNow.Ticks,
-                        JpegBytes = jpegBytes
-                    });
-
-                    Thread.Sleep(100);
+                        Thread.Sleep(reconnectDelayMs);
+                    }
                 }
             }
             catch (Exception ex)
             {
+                IsStreaming = false;
                 LogReceived?.Invoke($"영상 스트리밍 오류: {ex.Message}");
             }
             finally
